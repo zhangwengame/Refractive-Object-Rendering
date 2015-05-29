@@ -39,6 +39,7 @@ ID3D11Buffer*               g_pVertexBuffer = NULL;
 ID3D11Buffer*               g_pIndexBuffer = NULL;
 ID3D11VertexShader*         g_pVertexShader = NULL;
 ID3D11PixelShader*          g_pPixelShader = NULL;
+ID3D11PixelShader*          g_pPixelShader1 = NULL;
 ID3D11SamplerState*         g_pSamLinear = NULL;
 
 struct CB_VS_PER_OBJECT
@@ -397,6 +398,9 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     ID3DBlob* pPixelShaderBuffer = NULL;
     V_RETURN( CompileShaderFromFile( L"BasicHLSL11_PS.hlsl", "PSMain", "ps_4_0_level_9_1", &pPixelShaderBuffer ) );
 
+	ID3DBlob* pPixelShaderBuffer1 = NULL;
+	V_RETURN(CompileShaderFromFile(L"TestPS.hlsl", "PSMain", "ps_4_0_level_9_1", &pPixelShaderBuffer1));
+
     // Create the shaders
     V_RETURN( pd3dDevice->CreateVertexShader( pVertexShaderBuffer->GetBufferPointer(),
                                               pVertexShaderBuffer->GetBufferSize(), NULL, &g_pVertexShader ) );
@@ -404,6 +408,9 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     V_RETURN( pd3dDevice->CreatePixelShader( pPixelShaderBuffer->GetBufferPointer(),
                                              pPixelShaderBuffer->GetBufferSize(), NULL, &g_pPixelShader ) );
     DXUT_SetDebugName( g_pPixelShader, "PSMain" );
+	V_RETURN(pd3dDevice->CreatePixelShader(pPixelShaderBuffer1->GetBufferPointer(),
+		pPixelShaderBuffer1->GetBufferSize(), NULL, &g_pPixelShader1));
+	DXUT_SetDebugName(g_pPixelShader1, "PSMain");
 
     // Create our vertex input layout
     const D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -419,7 +426,7 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
 
     SAFE_RELEASE( pVertexShaderBuffer );
     SAFE_RELEASE( pPixelShaderBuffer );
-
+	SAFE_RELEASE(pPixelShaderBuffer1);
     // Load the mesh
     V_RETURN( g_Mesh11.Create( pd3dDevice, L"tiny\\tiny.sdkmesh", true ) );
 
@@ -458,7 +465,7 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     DXUT_SetDebugName( g_pcbPSPerFrame, "CB_PS_PER_FRAME" );
 
     // Setup the camera's view parameters
-    D3DXVECTOR3 vecEye( 0.0f, 0.0f, -100.0f );
+    D3DXVECTOR3 vecEye( 0.0f, 0.0f, -1000.0f );
     D3DXVECTOR3 vecAt ( 0.0f, 0.0f, -0.0f );
     g_Camera.SetViewParams( &vecEye, &vecAt );
     g_Camera.SetRadius( fObjectRadius * 3.0f, fObjectRadius * 0.5f, fObjectRadius * 10.0f );
@@ -480,7 +487,7 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, IDXGISwapCha
 
     // Setup the camera's projection parameters
     float fAspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
-    g_Camera.SetProjParams( D3DX_PI / 4, fAspectRatio, 2.0f, 4000.0f );
+    g_Camera.SetProjParams( D3DX_PI / 4, fAspectRatio, 300.0f, 4000.0f );
     g_Camera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
     g_Camera.SetButtonMasks( MOUSE_MIDDLE_BUTTON, MOUSE_WHEEL, MOUSE_LEFT_BUTTON );
 
@@ -491,8 +498,54 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, IDXGISwapCha
 
     return S_OK;
 }
+/*
+bool outputstencil(ID3D11DepthStencilView* pDSV, ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext){
+	D3D11_TEXTURE2D_DESC dsDesc,destTexDesc;
+	ID3D11Texture2D* destTex;
+	HRESULT result;
+	if(pDSV)
+	{
+		pDSV->GetDesc(&dsDesc);
+		// 使目标和源的描述一致 
+		memcpy(&destTexDesc,&dsDesc,sizeof(destTexDesc));
+		destTexDesc.Usage = D3D11_USAGE_STAGING;
+		destTexDesc.BindFlags = 0;
+		destTexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		result = pd3dDevice->CreateTexture2D(&destTexDesc, 0, &destTex);
+		if(FAILED(result))
+		{
+		//	HR(result);
+			return false;
+		}
+			//depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; 
 
+		pd3dImmediateContext->CopyResource(destTex, pDSV);
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		result = pd3dImmediateContext->Map(destTex, 0, D3D11_MAP_READ, 0, &mappedResource);
+		if(FAILED(result))
+		{
+			return false;
+		}
+		FILE *fp = fopen("depth-stencil.csv","w");
+		const UINT WIDTH = destTexDesc.Width;
+		const UINT HEIGHT = destTexDesc.Height;
+		//映射为32位的dword 
+		DWORD* pTexels = (DWORD*)mappedResource.pData;
+		for( UINT row = 0; row < HEIGHT; row++ )
+		{
+			UINT rowStart = row * mappedResource.RowPitch / sizeof(pTexels[0]);
+			for( UINT col = 0; col < WIDTH; col++ )
+			{
+				fprintf(fp,"％08x,",pTexels[rowStart + col]);
+			}
+			fprintf(fp,"\n");
+		}
+		fclose(fp);
+		pd3dImmediateContext->Unmap(destTex, 0);
+	}
+	return true;
 
+}*/
 //--------------------------------------------------------------------------------------
 // Render the scene using the D3D11 device
 //--------------------------------------------------------------------------------------
@@ -513,14 +566,14 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
     pd3dImmediateContext->ClearRenderTargetView( pRTV, ClearColor );
     ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
-    pd3dImmediateContext->ClearDepthStencilView( pDSV, D3D11_CLEAR_DEPTH, 1.0, 0 );
-
+	pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 127);
+//	outputstencil(pDSV, pd3dDevice, pd3dImmediateContext);
     D3DXMATRIX mWorldViewProjection;
     D3DXVECTOR3 vLightDir;
     D3DXMATRIX mWorld;
     D3DXMATRIX mView;
     D3DXMATRIX mProj;
-
+	D3DXMATRIX mTmp;
     // Get the projection & view matrix from the camera class
     mProj = *g_Camera.GetProjMatrix();
     mView = *g_Camera.GetViewMatrix();
@@ -549,7 +602,7 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     Offsets[0] = 0;
     pd3dImmediateContext->IASetVertexBuffers( 0, 1, pVB, Strides, Offsets );
     pd3dImmediateContext->IASetIndexBuffer( g_Mesh11.GetIB11( 0 ), g_Mesh11.GetIBFormat11( 0 ), 0 );
-	//raster state
+	//Raster state
 	ID3D11RasterizerState *mNoCullRS;
 	D3D11_RASTERIZER_DESC rsDesc;
 	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
@@ -559,14 +612,26 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 	rsDesc.DepthClipEnable = true;
 	pd3dDevice->CreateRasterizerState(&rsDesc, &mNoCullRS);
 	pd3dImmediateContext->RSSetState(mNoCullRS);
-	//depth state
+	//Depth state
 	ID3D11DepthStencilState *mNoDepth;
 	D3D11_DEPTH_STENCIL_DESC sdDesc;
+	D3D11_DEPTH_STENCILOP_DESC front;
+	D3D11_DEPTH_STENCILOP_DESC back;
 	ZeroMemory(&sdDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	front.StencilPassOp = D3D11_STENCIL_OP_INCR;
+	front.StencilFailOp = D3D11_STENCIL_OP_INCR;
+	front.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	front.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	back.StencilPassOp = D3D11_STENCIL_OP_DECR;
+	back.StencilFailOp = D3D11_STENCIL_OP_DECR;
+	back.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	back.StencilFunc = D3D11_COMPARISON_ALWAYS;
 	sdDesc.DepthEnable = false;
+	sdDesc.StencilEnable = true;
+	sdDesc.FrontFace = front;
+	sdDesc.BackFace = back;
 	pd3dDevice->CreateDepthStencilState(&sdDesc, &mNoDepth);
 	pd3dImmediateContext->OMSetDepthStencilState(mNoDepth, 0);
-
     // Set the shaders
     pd3dImmediateContext->VSSetShader( g_pVertexShader, NULL, 0 );
     pd3dImmediateContext->PSSetShader( g_pPixelShader, NULL, 0 );
@@ -575,9 +640,14 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     mWorld = g_mCenterMesh * *g_Camera.GetWorldMatrix();
     mProj = *g_Camera.GetProjMatrix();
     mView = *g_Camera.GetViewMatrix();
+	D3DXMATRIX m_orthoMatrix;//正交投影矩阵  
+	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)800, (float)600, 300.0f, 4000.0f);
 
-    mWorldViewProjection = mWorld * mView * mProj;
-         
+	//mWorldViewProjection = mWorld * mView * mProj ;
+	mWorldViewProjection = mWorld * mView * m_orthoMatrix;
+
+  //  mWorldViewProjection = mWorld * mView * mProj;
+	//mTmp = mWorld * mView;
     // VS Per object
     V( pd3dImmediateContext->Map( g_pcbVSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource ) );
     CB_VS_PER_OBJECT* pVSPerObject = ( CB_VS_PER_OBJECT* )MappedResource.pData;
@@ -615,7 +685,35 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 
         pd3dImmediateContext->DrawIndexed( ( UINT )pSubset->IndexCount, 0, ( UINT )pSubset->VertexStart );
     }
+	mNoDepth->Release();
+	pd3dImmediateContext->PSSetShader(g_pPixelShader1, NULL, 0);
+	//pd3dDevice->SetRenderState(D3DRS_STENCILREF, 127);
+	front.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	front.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	front.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	front.StencilFunc = D3D11_COMPARISON_EQUAL;
+	back.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	back.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	back.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	back.StencilFunc = D3D11_COMPARISON_EQUAL;
+	sdDesc.FrontFace = front;
+	sdDesc.BackFace = back;
+	pd3dDevice->CreateDepthStencilState(&sdDesc, &mNoDepth);
+	pd3dImmediateContext->OMSetDepthStencilState(mNoDepth, 128);
+	for (UINT subset = 0; subset < g_Mesh11.GetNumSubsets(0); ++subset)
+	{
+		// Get the subset
+		pSubset = g_Mesh11.GetSubset(0, subset);
 
+		PrimType = CDXUTSDKMesh::GetPrimitiveType11((SDKMESH_PRIMITIVE_TYPE)pSubset->PrimitiveType);
+		pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
+
+		// TODO: D3D11 - material loading
+		ID3D11ShaderResourceView* pDiffuseRV = g_Mesh11.GetMaterial(pSubset->MaterialID)->pDiffuseRV11;
+		pd3dImmediateContext->PSSetShaderResources(0, 1, &pDiffuseRV);
+
+		pd3dImmediateContext->DrawIndexed((UINT)pSubset->IndexCount, 0, (UINT)pSubset->VertexStart);
+	}
     DXUT_BeginPerfEvent( DXUT_PERFEVENTCOLOR, L"HUD / Stats" );
     g_HUD.OnRender( fElapsedTime );
     g_SampleUI.OnRender( fElapsedTime );
@@ -623,6 +721,7 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     DXUT_EndPerfEvent();
 	mNoCullRS->Release();
 	mNoDepth->Release();
+	//addBS->Release();
 }
 
 
@@ -653,6 +752,7 @@ void CALLBACK OnD3D11DestroyDevice( void* pUserContext )
     SAFE_RELEASE( g_pIndexBuffer );
     SAFE_RELEASE( g_pVertexShader );
     SAFE_RELEASE( g_pPixelShader );
+	SAFE_RELEASE(g_pPixelShader1);
     SAFE_RELEASE( g_pSamLinear );
 
     SAFE_RELEASE( g_pcbVSPerObject );

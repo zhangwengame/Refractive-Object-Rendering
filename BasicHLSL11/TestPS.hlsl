@@ -9,22 +9,22 @@
 //--------------------------------------------------------------------------------------
 // Globals
 //--------------------------------------------------------------------------------------
-cbuffer cbPerObject : register( b0 )
+cbuffer cbPerObject : register(b0)
 {
-	float4		g_vObjectColor			: packoffset( c0 );
+	float4		g_vObjectColor			: packoffset(c0);
 };
 
-cbuffer cbPerFrame : register( b1 )
+cbuffer cbPerFrame : register(b1)
 {
-	float3		g_vLightDir				: packoffset( c0 );
-	float		g_fAmbient				: packoffset( c0.w );
+	float3		g_vLightDir				: packoffset(c0);
+	float		g_fAmbient : packoffset(c0.w);
 };
 
 //--------------------------------------------------------------------------------------
 // Textures and Samplers
 //--------------------------------------------------------------------------------------
-Texture2D	g_txDiffuse : register( t0 );
-SamplerState g_samLinear : register( s0 );
+Texture2D	g_txDiffuse : register(t0);
+SamplerState g_samLinear : register(s0);
 
 //--------------------------------------------------------------------------------------
 // Input / Output structures
@@ -38,19 +38,11 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PSMain( PS_INPUT Input ) : SV_TARGET
+float4 PSMain(PS_INPUT Input) : SV_TARGET
 {
-	float4 vDiffuse = g_txDiffuse.Sample(g_samLinear, Input.vTexcoord);
-
-	float fLighting = saturate(dot(g_vLightDir, Input.vNormal));
-	fLighting = max(fLighting, g_fAmbient);
-	
-	
-	return vDiffuse * fLighting;
-
-	
-	/*float direct = dot(float3(0.0f, 0.0f, 1.0f), Input.vNormal);
-	if (direct < 0.000f) return float4(1.0f, 1.0f, 0.0f, 1.0f);
-	return float4(1.0f, 0.0f, 1.0f, 1.0f);*/
+		float direct = dot(float3(0.0f, 0.0f, 1.0f), Input.vNormal);
+		return float4(1.0f, 1.0f, 1.0f, 1.0f);
+//	if (direct < 0.000f) return float4(1.0f, 1.0f, 1.0f, 1.0f);
+//	return float4(1.0f, 0.0f, 1.0f, 1.0f);
 }
 
