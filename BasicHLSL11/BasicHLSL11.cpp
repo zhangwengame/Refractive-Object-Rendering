@@ -381,7 +381,7 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     V_RETURN( g_D3DSettingsDlg.OnD3D11CreateDevice( pd3dDevice ) );
     g_pTxtHelper = new CDXUTTextHelper( pd3dDevice, pd3dImmediateContext, &g_DialogResourceManager, 15 );
 
-    D3DXVECTOR3 vCenter( 0.25767413f, -28.503521f, 111.00689f );
+    D3DXVECTOR3 vCenter( 0.0f, 0.0f, 0.0f );
     FLOAT fObjectRadius = 378.15607f;
 
     D3DXMatrixTranslation( &g_mCenterMesh, -vCenter.x, -vCenter.y, -vCenter.z );
@@ -498,54 +498,7 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, IDXGISwapCha
 
     return S_OK;
 }
-/*
-bool outputstencil(ID3D11DepthStencilView* pDSV, ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext){
-	D3D11_TEXTURE2D_DESC dsDesc,destTexDesc;
-	ID3D11Texture2D* destTex;
-	HRESULT result;
-	if(pDSV)
-	{
-		pDSV->GetDesc(&dsDesc);
-		// 使目标和源的描述一致 
-		memcpy(&destTexDesc,&dsDesc,sizeof(destTexDesc));
-		destTexDesc.Usage = D3D11_USAGE_STAGING;
-		destTexDesc.BindFlags = 0;
-		destTexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-		result = pd3dDevice->CreateTexture2D(&destTexDesc, 0, &destTex);
-		if(FAILED(result))
-		{
-		//	HR(result);
-			return false;
-		}
-			//depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; 
 
-		pd3dImmediateContext->CopyResource(destTex, pDSV);
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		result = pd3dImmediateContext->Map(destTex, 0, D3D11_MAP_READ, 0, &mappedResource);
-		if(FAILED(result))
-		{
-			return false;
-		}
-		FILE *fp = fopen("depth-stencil.csv","w");
-		const UINT WIDTH = destTexDesc.Width;
-		const UINT HEIGHT = destTexDesc.Height;
-		//映射为32位的dword 
-		DWORD* pTexels = (DWORD*)mappedResource.pData;
-		for( UINT row = 0; row < HEIGHT; row++ )
-		{
-			UINT rowStart = row * mappedResource.RowPitch / sizeof(pTexels[0]);
-			for( UINT col = 0; col < WIDTH; col++ )
-			{
-				fprintf(fp,"％08x,",pTexels[rowStart + col]);
-			}
-			fprintf(fp,"\n");
-		}
-		fclose(fp);
-		pd3dImmediateContext->Unmap(destTex, 0);
-	}
-	return true;
-
-}*/
 //--------------------------------------------------------------------------------------
 // Render the scene using the D3D11 device
 //--------------------------------------------------------------------------------------
@@ -717,15 +670,26 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 		pd3dImmediateContext->DrawIndexed((UINT)pSubset->IndexCount, 0, (UINT)pSubset->VertexStart);
 	}
     DXUT_BeginPerfEvent( DXUT_PERFEVENTCOLOR, L"HUD / Stats" );
-    g_HUD.OnRender( fElapsedTime );
-    g_SampleUI.OnRender( fElapsedTime );
-    RenderText();
+   // g_HUD.OnRender( fElapsedTime );
+  //  g_SampleUI.OnRender( fElapsedTime );
+  //  RenderText();
 	DXUT_EndPerfEvent();
 	IDXGISwapChain* pSwapChain = DXUTGetDXGISwapChain();	
 	ID3D11Texture2D *backBuffer(NULL);
 	pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+/*	D3D11_TEXTURE2D_DESC bufDes;
+	backBuffer->GetDesc(&bufDes);
+	int a = bufDes.Format;
+	UINT size = bufDes.Width*bufDes.Height*4;
+	int color[200000];
+	backBuffer->GetPrivateData(WKPDID_D3DDebugObjectName, &size, color);*/
 	D3DX11SaveTextureToFile(pd3dImmediateContext, backBuffer, D3DX11_IFF_BMP, L"save.bmp");
-    
+/*	FILE *f;
+	fopen_s(&f,"yo","w");
+	for (int i = 0; i < (int)size; i++)
+		fprintf(f,"%x\n", color[i]);
+	fclose(f);
+	return;*=*/
 	backBuffer->Release();
 	mNoCullRS->Release();
 	mNoDepth->Release();
