@@ -148,7 +148,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     DXUTInit( true, true, NULL ); // Parse the command line, show msgboxes on error, no extra command line params
     DXUTSetCursorSettings( true, true ); // Show the cursor and clip it when in full screen
     DXUTCreateWindow( L"BasicHLSL11" );
-    DXUTCreateDevice (D3D_FEATURE_LEVEL_9_2, true, 800, 600 );
+    DXUTCreateDevice (D3D_FEATURE_LEVEL_9_2, true, 400, 400 );
     //DXUTCreateDevice(true, 640, 480);
     DXUTMainLoop(); // Enter into the DXUT render loop
 
@@ -428,7 +428,7 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     SAFE_RELEASE( pPixelShaderBuffer );
 	SAFE_RELEASE(pPixelShaderBuffer1);
     // Load the mesh
-    V_RETURN( g_Mesh11.Create( pd3dDevice, L"tiny\\tiny.sdkmesh", true ) );
+    V_RETURN( g_Mesh11.Create( pd3dDevice, L"d.sdkmesh", true ) );
 
     // Create a sampler state
     D3D11_SAMPLER_DESC SamDesc;
@@ -621,17 +621,19 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 	front.StencilPassOp = D3D11_STENCIL_OP_INCR;
 	front.StencilFailOp = D3D11_STENCIL_OP_INCR;
 	front.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	front.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	front.StencilFunc = D3D11_COMPARISON_EQUAL;
 	back.StencilPassOp = D3D11_STENCIL_OP_DECR;
 	back.StencilFailOp = D3D11_STENCIL_OP_DECR;
 	back.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	back.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	back.StencilFunc = D3D11_COMPARISON_EQUAL;
 	sdDesc.DepthEnable = false;
 	sdDesc.StencilEnable = true;
 	sdDesc.FrontFace = front;
 	sdDesc.BackFace = back;
+	sdDesc.StencilReadMask = 0xff;
+	sdDesc.StencilWriteMask = 0xff;
 	pd3dDevice->CreateDepthStencilState(&sdDesc, &mNoDepth);
-	pd3dImmediateContext->OMSetDepthStencilState(mNoDepth, 0);
+	pd3dImmediateContext->OMSetDepthStencilState(mNoDepth, 127);
     // Set the shaders
     pd3dImmediateContext->VSSetShader( g_pVertexShader, NULL, 0 );
     pd3dImmediateContext->PSSetShader( g_pPixelShader, NULL, 0 );
@@ -641,7 +643,7 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     mProj = *g_Camera.GetProjMatrix();
     mView = *g_Camera.GetViewMatrix();
 	D3DXMATRIX m_orthoMatrix;//正交投影矩阵  
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)800, (float)600, 300.0f, 4000.0f);
+	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)600, (float)600, 300.0f, 4000.0f);
 
 	//mWorldViewProjection = mWorld * mView * mProj ;
 	mWorldViewProjection = mWorld * mView * m_orthoMatrix;
@@ -691,15 +693,15 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 	front.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	front.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	front.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	front.StencilFunc = D3D11_COMPARISON_EQUAL;
+	front.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;
 	back.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	back.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	back.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	back.StencilFunc = D3D11_COMPARISON_EQUAL;
+	back.StencilFunc = D3D11_COMPARISON_NOT_EQUAL;
 	sdDesc.FrontFace = front;
 	sdDesc.BackFace = back;
 	pd3dDevice->CreateDepthStencilState(&sdDesc, &mNoDepth);
-	pd3dImmediateContext->OMSetDepthStencilState(mNoDepth, 128);
+	pd3dImmediateContext->OMSetDepthStencilState(mNoDepth, 127);
 	for (UINT subset = 0; subset < g_Mesh11.GetNumSubsets(0); ++subset)
 	{
 		// Get the subset
@@ -718,7 +720,13 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     g_HUD.OnRender( fElapsedTime );
     g_SampleUI.OnRender( fElapsedTime );
     RenderText();
-    DXUT_EndPerfEvent();
+	DXUT_EndPerfEvent();
+	IDXGISwapChain* pSwapChain = DXUTGetDXGISwapChain();	
+	ID3D11Texture2D *backBuffer(NULL);
+	pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+	D3DX11SaveTextureToFile(pd3dImmediateContext, backBuffer, D3DX11_IFF_BMP, L"save.bmp");
+    
+	backBuffer->Release();
 	mNoCullRS->Release();
 	mNoDepth->Release();
 	//addBS->Release();
