@@ -45,7 +45,7 @@ ID3D11VertexShader*         g_pVertexShader = NULL;
 ID3D11PixelShader*          g_pPixelShader = NULL;
 ID3D11PixelShader*          g_pPixelShader1 = NULL;
 ID3D11SamplerState*         g_pSamLinear = NULL;
-
+#define me 1 
 struct CB_VS_PER_OBJECT
 {
     D3DXMATRIX m_WorldViewProj;
