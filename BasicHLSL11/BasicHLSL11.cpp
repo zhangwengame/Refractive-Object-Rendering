@@ -6,6 +6,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
+
 #include "DXUT.h"
 #include "DXUTcamera.h"
 #include "DXUTgui.h"
@@ -13,7 +14,10 @@
 #include "SDKmisc.h"
 #include "SDKMesh.h"
 #include "resource.h"
-
+//#include <dxgiformat.h>
+// "Tex\DirectXTex.h"
+//using namespace DirectX;
+//#include <DirectXTex\DirectXTex.h>
 //--------------------------------------------------------------------------------------
 // Global variables
 //--------------------------------------------------------------------------------------
@@ -502,6 +506,9 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, IDXGISwapCha
 //--------------------------------------------------------------------------------------
 // Render the scene using the D3D11 device
 //--------------------------------------------------------------------------------------
+ID3D11Texture2D *Textest[10];
+int len = 0;
+
 void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime,
                                   float fElapsedTime, void* pUserContext )
 {
@@ -515,7 +522,7 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     }
 
     // Clear the render target and depth stencil
-    float ClearColor[4] = { 0.0f, 0.25f, 0.25f, 0.55f };
+    float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
     pd3dImmediateContext->ClearRenderTargetView( pRTV, ClearColor );
     ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
@@ -677,19 +684,34 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 	IDXGISwapChain* pSwapChain = DXUTGetDXGISwapChain();	
 	ID3D11Texture2D *backBuffer(NULL);
 	pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-/*	D3D11_TEXTURE2D_DESC bufDes;
-	backBuffer->GetDesc(&bufDes);
-	int a = bufDes.Format;
-	UINT size = bufDes.Width*bufDes.Height*4;
-	int color[200000];
-	backBuffer->GetPrivateData(WKPDID_D3DDebugObjectName, &size, color);*/
-	D3DX11SaveTextureToFile(pd3dImmediateContext, backBuffer, D3DX11_IFF_BMP, L"save.bmp");
-/*	FILE *f;
-	fopen_s(&f,"yo","w");
-	for (int i = 0; i < (int)size; i++)
-		fprintf(f,"%x\n", color[i]);
-	fclose(f);
-	return;*=*/
+/*	D3D11_TEXTURE2D_DESC texDesc;
+	backBuffer->GetDesc(&texDesc);
+	texDesc.BindFlags = 0;
+	texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	texDesc.Usage = D3D11_USAGE_STAGING;
+	if (len < 10000)
+	{
+		if (len % 1000 == 0)
+		{
+			HRESULT hr = pd3dDevice->CreateTexture2D(&texDesc, NULL, &Textest[len / 1000]);
+			pd3dImmediateContext->CopyResource(Textest[len / 1000], backBuffer);
+		}
+
+		len++;
+	}
+	else
+	{
+		if (len == 10000)
+		{
+			D3DX11SaveTextureToFile(pd3dImmediateContext, Textest[0], D3DX11_IFF_BMP, L"save0.bmp");
+			D3DX11SaveTextureToFile(pd3dImmediateContext, Textest[2], D3DX11_IFF_BMP, L"save2.bmp");
+			D3DX11SaveTextureToFile(pd3dImmediateContext, Textest[4], D3DX11_IFF_BMP, L"save4.bmp");
+			D3DX11SaveTextureToFile(pd3dImmediateContext, Textest[6], D3DX11_IFF_BMP, L"save6.bmp");
+			D3DX11SaveTextureToFile(pd3dImmediateContext, Textest[8], D3DX11_IFF_BMP, L"save8.bmp");
+		}
+	}*/
+	//D3DX11SaveTextureToFile(pd3dImmediateContext, backBuffer, D3DX11_IFF_BMP, L"save.bmp");
+
 	backBuffer->Release();
 	mNoCullRS->Release();
 	mNoDepth->Release();
@@ -731,6 +753,3 @@ void CALLBACK OnD3D11DestroyDevice( void* pUserContext )
     SAFE_RELEASE( g_pcbPSPerObject );
     SAFE_RELEASE( g_pcbPSPerFrame );
 }
-
-
-

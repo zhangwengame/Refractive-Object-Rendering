@@ -40,13 +40,13 @@ struct PS_INPUT
 //--------------------------------------------------------------------------------------
 float4 PSMain( PS_INPUT Input ) : SV_TARGET
 {
-	float4 vDiffuse = g_txDiffuse.Sample(g_samLinear, Input.vTexcoord);
+	/*float4 vDiffuse = g_txDiffuse.Sample(g_samLinear, Input.vTexcoord);
 
 	float fLighting = saturate(dot(g_vLightDir, Input.vNormal));
 	fLighting = max(fLighting, g_fAmbient);
 	
-	
-	return vDiffuse * fLighting;
+	*/
+	return float4(0.0f,0.0f,0.0f,1.0f);
 
 	
 	/*float direct = dot(float3(0.0f, 0.0f, 1.0f), Input.vNormal);
