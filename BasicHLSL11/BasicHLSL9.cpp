@@ -22,7 +22,7 @@
 // Global variables
 //--------------------------------------------------------------------------------------
 extern CDXUTDialogResourceManager   g_DialogResourceManager; // manager for shared resources of dialogs
-extern CModelViewerCamera           g_Camera;               // A model viewing camera
+extern CFirstPersonCamera           g_Camera;               // A model viewing camera
 extern CDXUTDirectionWidget g_LightControl;
 extern CD3DSettingsDlg              g_D3DSettingsDlg;       // Device settings dialog
 extern CDXUTDialog                  g_HUD;                  // manages the 3D   
@@ -175,7 +175,7 @@ HRESULT CALLBACK OnD3D9CreateDevice( IDirect3DDevice9* pd3dDevice, const D3DSURF
     D3DXVECTOR3 vecEye( 0.0f, 0.0f, -15.0f );
     D3DXVECTOR3 vecAt ( 0.0f, 0.0f, -0.0f );
     g_Camera.SetViewParams( &vecEye, &vecAt );
-    g_Camera.SetRadius( fObjectRadius * 3.0f, fObjectRadius * 0.5f, fObjectRadius * 10.0f );
+    //g_Camera.SetRadius( fObjectRadius * 3.0f, fObjectRadius * 0.5f, fObjectRadius * 10.0f );
 
     return S_OK;
 }
@@ -253,8 +253,8 @@ HRESULT CALLBACK OnD3D9ResetDevice( IDirect3DDevice9* pd3dDevice,
     // Setup the camera's projection parameters
     float fAspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
     g_Camera.SetProjParams( D3DX_PI / 4, fAspectRatio, 2.0f, 4000.0f );
-    g_Camera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
-    g_Camera.SetButtonMasks( MOUSE_LEFT_BUTTON, MOUSE_WHEEL, MOUSE_MIDDLE_BUTTON );
+    //g_Camera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
+    //g_Camera.SetButtonMasks( MOUSE_LEFT_BUTTON, MOUSE_WHEEL, MOUSE_MIDDLE_BUTTON );
 
     g_HUD.SetLocation( pBackBufferSurfaceDesc->Width - 170, 0 );
     g_HUD.SetSize( 170, 170 );
