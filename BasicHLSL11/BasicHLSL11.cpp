@@ -14,6 +14,10 @@
 #include "SDKmisc.h"
 #include "SDKMesh.h"
 #include "resource.h"
+
+//typedef struct item{
+//	float4 
+//};
 //#include <dxgiformat.h>
 // "Tex\DirectXTex.h"
 //using namespace DirectX;
@@ -22,7 +26,8 @@
 // Global variables
 //--------------------------------------------------------------------------------------
 CDXUTDialogResourceManager  g_DialogResourceManager; // manager for shared resources of dialogs
-CModelViewerCamera          g_Camera;               // A model viewing camera
+//CModelViewerCamera          g_Camera;               // A model viewing camera
+CFirstPersonCamera          g_Camera;               // A model viewing camera
 CDXUTDirectionWidget        g_LightControl;
 CD3DSettingsDlg             g_D3DSettingsDlg;       // Device settings dialog
 CDXUTDialog                 g_HUD;                  // manages the 3D   
@@ -45,6 +50,11 @@ ID3D11VertexShader*         g_pVertexShader = NULL;
 ID3D11PixelShader*          g_pPixelShader = NULL;
 ID3D11PixelShader*          g_pPixelShader1 = NULL;
 ID3D11SamplerState*         g_pSamLinear = NULL;
+
+// Setup the camera's view parameters
+D3DXVECTOR3 vecEye(0.0f, 0.0f, 350.0f);
+D3DXVECTOR3 vecAt(0.0f, 0.0f, 2000.0f);
+FLOAT fObjectRadius = 3.15607f;
 
 struct CB_VS_PER_OBJECT
 {
@@ -152,7 +162,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     DXUTInit( true, true, NULL ); // Parse the command line, show msgboxes on error, no extra command line params
     DXUTSetCursorSettings( true, true ); // Show the cursor and clip it when in full screen
     DXUTCreateWindow( L"BasicHLSL11" );
-    DXUTCreateDevice (D3D_FEATURE_LEVEL_9_2, true, 400, 400 );
+    DXUTCreateDevice (D3D_FEATURE_LEVEL_9_2, true, 600, 600 );
     //DXUTCreateDevice(true, 640, 480);
     DXUTMainLoop(); // Enter into the DXUT render loop
 
@@ -287,7 +297,7 @@ LRESULT CALLBACK MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bo
     g_LightControl.HandleMessages( hWnd, uMsg, wParam, lParam );
 
     // Pass all remaining windows messages to camera so it can respond to user input
-    g_Camera.HandleMessages( hWnd, uMsg, wParam, lParam );
+    //g_Camera.HandleMessages( hWnd, uMsg, wParam, lParam );
 
     return 0;
 }
@@ -304,6 +314,51 @@ void CALLBACK OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown, void* pUserC
         {
             case VK_F1:
                 g_bShowHelp = !g_bShowHelp; break;
+			case 'D':{
+						 vecEye.x += 10.0f;
+						 vecAt.x += 10.0f;
+						 g_Camera.SetViewParams(&vecEye, &vecAt);
+						 break;
+			}
+			case 'A':{
+						 vecEye.x -= 10.0f;
+						 vecAt.x -= 10.0f;
+						 g_Camera.SetViewParams(&vecEye, &vecAt);
+						 break;
+			}
+			case 'S':{
+						 vecEye.y -= 10.0f;
+						 vecAt.y -= 10.0f;
+						 g_Camera.SetViewParams(&vecEye, &vecAt);
+						 break;
+			}
+			case 'W':{
+
+						 vecEye.y += 10.0f;
+						 vecAt.y += 10.0f;
+
+						 g_Camera.SetViewParams(&vecEye, &vecAt);
+
+						 break;
+			}
+			case 'Q':{
+
+						 vecEye.z += 1.0f;
+
+						 vecAt.z += 1.0f;
+						 g_Camera.SetViewParams(&vecEye, &vecAt);
+						 //nearPlaneDis += 100;
+						 //g_Camera.SetProjParams(D3DX_PI / 4, 4.0 / 3, nearPlaneDis, 4000.0f);
+						 //g_Camera.SetRadius(vecEye.z, -100.0f);
+						 break;
+			}
+			case 'E':{
+						 vecEye.z -= 1.0f;
+
+						 vecAt.z += 1.0f;
+						 g_Camera.SetViewParams(&vecEye, &vecAt);
+						 break;
+			}
         }
     }
 }
@@ -386,7 +441,7 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     g_pTxtHelper = new CDXUTTextHelper( pd3dDevice, pd3dImmediateContext, &g_DialogResourceManager, 15 );
 
     D3DXVECTOR3 vCenter( 0.0f, 0.0f, 0.0f );
-    FLOAT fObjectRadius = 378.15607f;
+    //FLOAT fObjectRadius = 378.15607f;
 
     D3DXMatrixTranslation( &g_mCenterMesh, -vCenter.x, -vCenter.y, -vCenter.z );
     D3DXMATRIXA16 m;
@@ -432,7 +487,8 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     SAFE_RELEASE( pPixelShaderBuffer );
 	SAFE_RELEASE(pPixelShaderBuffer1);
     // Load the mesh
-    V_RETURN( g_Mesh11.Create( pd3dDevice, L"d.sdkmesh", true ) );
+    //V_RETURN( g_Mesh11.Create( pd3dDevice, L"tiny\\tiny.sdkmesh", true ) );
+	V_RETURN(g_Mesh11.Create(pd3dDevice, L"tiny\\tiny.sdkmesh", true));
 
     // Create a sampler state
     D3D11_SAMPLER_DESC SamDesc;
@@ -468,11 +524,9 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     V_RETURN( pd3dDevice->CreateBuffer( &Desc, NULL, &g_pcbPSPerFrame ) );
     DXUT_SetDebugName( g_pcbPSPerFrame, "CB_PS_PER_FRAME" );
 
-    // Setup the camera's view parameters
-    D3DXVECTOR3 vecEye( 0.0f, 0.0f, -1000.0f );
-    D3DXVECTOR3 vecAt ( 0.0f, 0.0f, -0.0f );
+    
     g_Camera.SetViewParams( &vecEye, &vecAt );
-    g_Camera.SetRadius( fObjectRadius * 3.0f, fObjectRadius * 0.5f, fObjectRadius * 10.0f );
+    //g_Camera.SetRadius( fObjectRadius * 3.0f, fObjectRadius * 0.5f, fObjectRadius * 10.0f );
 
     return S_OK;
 }
@@ -491,9 +545,9 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, IDXGISwapCha
 
     // Setup the camera's projection parameters
     float fAspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
-    g_Camera.SetProjParams( D3DX_PI / 4, fAspectRatio, 300.0f, 4000.0f );
-    g_Camera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
-    g_Camera.SetButtonMasks( MOUSE_MIDDLE_BUTTON, MOUSE_WHEEL, MOUSE_LEFT_BUTTON );
+    g_Camera.SetProjParams( D3DX_PI / 4, fAspectRatio, 100.0f, 4000.0f );
+    //g_Camera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
+    //g_Camera.SetButtonMasks( MOUSE_MIDDLE_BUTTON, MOUSE_WHEEL, MOUSE_LEFT_BUTTON );
 
     g_HUD.SetLocation( pBackBufferSurfaceDesc->Width - 170, 0 );
     g_HUD.SetSize( 170, 170 );
@@ -522,7 +576,8 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     }
 
     // Clear the render target and depth stencil
-    float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    //float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float ClearColor[4] = { 0.0f, 1.25f, 0.25f, 0.55f };
     ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
     pd3dImmediateContext->ClearRenderTargetView( pRTV, ClearColor );
     ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
@@ -555,8 +610,8 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     //IA setup
     pd3dImmediateContext->IASetInputLayout( g_pVertexLayout11 );
     UINT Strides[1];
-    UINT Offsets[1];
     ID3D11Buffer* pVB[1];
+    UINT Offsets[1];
     pVB[0] = g_Mesh11.GetVB11( 0, 0 );
     Strides[0] = ( UINT )g_Mesh11.GetVertexStride( 0, 0 );
     Offsets[0] = 0;
@@ -603,10 +658,10 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     mProj = *g_Camera.GetProjMatrix();
     mView = *g_Camera.GetViewMatrix();
 	D3DXMATRIX m_orthoMatrix;//正交投影矩阵  
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)600, (float)600, 300.0f, 4000.0f);
+	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)800, (float)800, 300.0f, 4000.0f);
 
 	//mWorldViewProjection = mWorld * mView * mProj ;
-	mWorldViewProjection = mWorld * mView * m_orthoMatrix;
+	mWorldViewProjection = mWorld * m_orthoMatrix;
 
   //  mWorldViewProjection = mWorld * mView * mProj;
 	//mTmp = mWorld * mView;
@@ -679,7 +734,7 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     DXUT_BeginPerfEvent( DXUT_PERFEVENTCOLOR, L"HUD / Stats" );
    // g_HUD.OnRender( fElapsedTime );
   //  g_SampleUI.OnRender( fElapsedTime );
-  //  RenderText();
+    //RenderText();
 	DXUT_EndPerfEvent();
 	IDXGISwapChain* pSwapChain = DXUTGetDXGISwapChain();	
 	ID3D11Texture2D *backBuffer(NULL);
