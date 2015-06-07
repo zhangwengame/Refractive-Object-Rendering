@@ -14,10 +14,15 @@
 #include "SDKmisc.h"
 #include "SDKMesh.h"
 #include "resource.h"
+#include <xnamath.h>
+#include <string>
 
-//typedef struct item{
-//	float4 
-//};
+typedef struct SimpleVertex
+{
+	XMFLOAT3 Pos;
+	XMFLOAT3 Nor;
+}node;
+
 //#include <dxgiformat.h>
 // "Tex\DirectXTex.h"
 //using namespace DirectX;
@@ -52,9 +57,24 @@ ID3D11PixelShader*          g_pPixelShader1 = NULL;
 ID3D11SamplerState*         g_pSamLinear = NULL;
 
 // Setup the camera's view parameters
-D3DXVECTOR3 vecEye(0.0f, 0.0f, 350.0f);
-D3DXVECTOR3 vecAt(0.0f, 0.0f, 2000.0f);
-FLOAT fObjectRadius = 3.15607f;
+D3DXVECTOR3 vecEye(0.0f, 0.0f, -300.0f);
+D3DXVECTOR3 vecAt(0.0f, 0.0f, -9000.0f);
+FLOAT fObjectRadius = 300.0f;
+float farPlane = 9000.0f;
+float nearPlane = 1.0f;
+int meshWidth;
+int meshHeight;
+int meshDepth;
+bool flagVoxel = false;
+bool flagShowVoxel = false;
+
+float x_min = 0;
+float x_max = 0;
+float y_min = 0;
+float y_max = 0;
+float z_min = 0;
+float z_max = 0;
+
 
 struct CB_VS_PER_OBJECT
 {
@@ -162,7 +182,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     DXUTInit( true, true, NULL ); // Parse the command line, show msgboxes on error, no extra command line params
     DXUTSetCursorSettings( true, true ); // Show the cursor and clip it when in full screen
     DXUTCreateWindow( L"BasicHLSL11" );
-    DXUTCreateDevice (D3D_FEATURE_LEVEL_9_2, true, 600, 600 );
+    DXUTCreateDevice (D3D_FEATURE_LEVEL_9_2, true, 800, 800 );
+	//DXUTCreateDevice(D3D_FEATURE_LEVEL_9_2, true, meshWidth, meshHeight);
     //DXUTCreateDevice(true, 640, 480);
     DXUTMainLoop(); // Enter into the DXUT render loop
 
@@ -344,7 +365,6 @@ void CALLBACK OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown, void* pUserC
 			case 'Q':{
 
 						 vecEye.z += 1.0f;
-
 						 vecAt.z += 1.0f;
 						 g_Camera.SetViewParams(&vecEye, &vecAt);
 						 //nearPlaneDis += 100;
@@ -355,9 +375,12 @@ void CALLBACK OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown, void* pUserC
 			case 'E':{
 						 vecEye.z -= 1.0f;
 
-						 vecAt.z += 1.0f;
+						 vecAt.z -= 1.0f;
 						 g_Camera.SetViewParams(&vecEye, &vecAt);
 						 break;
+			}
+			case 'Z':{
+				
 			}
         }
     }
@@ -476,7 +499,7 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     {
         { "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        //{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
     V_RETURN( pd3dDevice->CreateInputLayout( layout, ARRAYSIZE( layout ), pVertexShaderBuffer->GetBufferPointer(),
@@ -488,7 +511,7 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
 	SAFE_RELEASE(pPixelShaderBuffer1);
     // Load the mesh
     //V_RETURN( g_Mesh11.Create( pd3dDevice, L"tiny\\tiny.sdkmesh", true ) );
-	V_RETURN(g_Mesh11.Create(pd3dDevice, L"tiny\\tiny.sdkmesh", true));
+	V_RETURN(g_Mesh11.Create(pd3dDevice, L"tiny\\f.sdkmesh", true));
 
     // Create a sampler state
     D3D11_SAMPLER_DESC SamDesc;
@@ -528,6 +551,108 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     g_Camera.SetViewParams( &vecEye, &vecAt );
     //g_Camera.SetRadius( fObjectRadius * 3.0f, fObjectRadius * 0.5f, fObjectRadius * 10.0f );
 
+	//pd3dImmediateContext->IASetInputLayout(g_pVertexLayout11);
+	//g_Mesh11.GetRawVerticesAt
+	//g_Mesh11.GetMesh(0)->
+	//void *pvv = g_Mesh11.GetVB11(0,0);
+	//void *pvv = static_cast<void*> (g_Mesh11.GetRawVerticesAt(1));
+	//node * pv = (node *)pvv;
+	//float x = pv->Pos.x;
+	UINT Strides[1];
+	ID3D11Buffer* pVB[1];
+	UINT Offsets[1];
+	pVB[0] = g_Mesh11.GetVB11(0, 0);
+	Strides[0] = (UINT)g_Mesh11.GetVertexStride(0, 0);
+	Offsets[0] = 0;
+	int size = g_Mesh11.GetNumVertices(0, 0);
+
+	ID3D11Buffer * cpubuffer = NULL;
+	D3D11_BUFFER_DESC abufferDesc;
+	ZeroMemory(&abufferDesc, sizeof(abufferDesc));
+	pVB[0]->GetDesc(&abufferDesc);
+	int i = g_Mesh11.GetNumIBs();
+		//GetDesc(&bufferDesc);
+	abufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	abufferDesc.Usage = D3D11_USAGE_STAGING;
+	abufferDesc.BindFlags = 0;
+	abufferDesc.MiscFlags = 0;
+
+	//ID3D11Buffer* pDebugBuffer = NULL;
+	pd3dDevice->CreateBuffer(&abufferDesc, NULL, &cpubuffer);
+	pd3dImmediateContext->CopyResource(cpubuffer, pVB[0]);
+	D3D11_MAPPED_SUBRESOURCE resultResources;
+	ZeroMemory(&resultResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	pd3dImmediateContext->Map(cpubuffer, 0, D3D11_MAP_READ, 0, &resultResources);
+	node * ptn = (node *)(resultResources.pData);
+
+	//pVB[0]->G
+
+
+	node* m_pGPUTestResult = new node[size];
+	for (int i = 0; i<size; i++)
+	{
+		m_pGPUTestResult[i].Pos.x = ptn[i].Pos.x;
+		m_pGPUTestResult[i].Pos.y = ptn[i].Pos.y;
+		m_pGPUTestResult[i].Pos.y = ptn[i].Pos.z;
+		if (ptn[i].Pos.x > x_max)
+		{
+			x_max = ptn[i].Pos.x;
+		}
+		if (ptn[i].Pos.x < x_min)
+		{
+			x_min = ptn[i].Pos.x;
+		}
+		if (ptn[i].Pos.y > y_max)
+		{
+			y_max = ptn[i].Pos.y;
+		}
+		if (ptn[i].Pos.y < y_min)
+		{
+			y_min = ptn[i].Pos.y;
+		}
+		if (ptn[i].Pos.z > z_max)
+		{
+			z_max = ptn[i].Pos.z;
+		}
+		if (ptn[i].Pos.z < z_min)
+		{
+			z_min = ptn[i].Pos.z;
+		}
+	}
+
+	vecEye.z = y_min;
+	vecAt.z = y_min - 1000.0f;
+	g_Camera.SetViewParams(&vecEye, &vecAt);
+
+	//node * ptn = (node *)(pVB[0]);
+	//ID3D11Buffer* a = (ID3D11Buffer*)ptn;
+	
+	//for (size_t i = 0; i < size; i++)
+	//{
+	//	if (ptn->Pos.x < x_min)
+	//		x_min = ptn->Pos.x;
+	//	if (ptn->Pos.x > x_max)
+	//		x_max = ptn->Pos.x;
+
+	//}
+
+	meshWidth = ((int)(x_max - x_min) / 100);
+	if ((int)(x_max - x_min) % 100 != 0)
+		meshWidth++;
+	meshWidth *= 100;
+	meshHeight = ((int)(y_max - y_min) / 100);
+	if ((int)(y_max - y_min) % 100 != 0)
+		meshHeight++;
+	meshHeight *= 100;
+	meshDepth = ((int)(z_max - z_min) / 100);
+	if ((int)(z_max - z_min) % 100 != 0)
+		meshDepth++;
+	meshDepth *= 100;
+
+
+
+	pd3dImmediateContext->Unmap(cpubuffer, 0);
+	cpubuffer->Release();
     return S_OK;
 }
 
@@ -545,7 +670,7 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, IDXGISwapCha
 
     // Setup the camera's projection parameters
     float fAspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
-    g_Camera.SetProjParams( D3DX_PI / 4, fAspectRatio, 100.0f, 4000.0f );
+    g_Camera.SetProjParams( D3DX_PI / 4, fAspectRatio, /*50.0f*/nearPlane, /*4000.0f*/farPlane );
     //g_Camera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
     //g_Camera.SetButtonMasks( MOUSE_MIDDLE_BUTTON, MOUSE_WHEEL, MOUSE_LEFT_BUTTON );
 
@@ -560,8 +685,9 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, IDXGISwapCha
 //--------------------------------------------------------------------------------------
 // Render the scene using the D3D11 device
 //--------------------------------------------------------------------------------------
-ID3D11Texture2D *Textest[10];
+ID3D11Texture2D *Textest[1000];
 int len = 0;
+size_t indexFrame = 0;
 
 void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime,
                                   float fElapsedTime, void* pUserContext )
@@ -658,7 +784,8 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
     mProj = *g_Camera.GetProjMatrix();
     mView = *g_Camera.GetViewMatrix();
 	D3DXMATRIX m_orthoMatrix;//正交投影矩阵  
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)800, (float)800, 300.0f, 4000.0f);
+	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)800, (float)800, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
+	//D3DXMatrixOrthoLH(&m_orthoMatrix, (float)meshWidth, (float)meshDepth, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
 
 	//mWorldViewProjection = mWorld * mView * mProj ;
 	mWorldViewProjection = mWorld * m_orthoMatrix;
@@ -739,12 +866,54 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 	IDXGISwapChain* pSwapChain = DXUTGetDXGISwapChain();	
 	ID3D11Texture2D *backBuffer(NULL);
 	pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-/*	D3D11_TEXTURE2D_DESC texDesc;
+
+	D3D11_TEXTURE2D_DESC texDesc;
 	backBuffer->GetDesc(&texDesc);
 	texDesc.BindFlags = 0;
 	texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
 	texDesc.Usage = D3D11_USAGE_STAGING;
-	if (len < 10000)
+
+	if (!flagShowVoxel){
+		if (indexFrame <= meshHeight)
+		{
+			if (indexFrame == meshHeight)
+				flagShowVoxel = flagVoxel = true;
+
+			char file[128];
+			if (!flagVoxel){
+				//strcpy(fileName,"save");
+				//strcpy(fileName, itoa(indexFrame,,));
+				sprintf(file, "%d", indexFrame);
+				sprintf(&file[strlen(file)], "%s", ".bmp");
+				std::string fileName(file);
+				//fileName += ".bmp";
+				//strcpy(&fileName[strlen(fileName)], ".bmp");
+
+				HRESULT hr = pd3dDevice->CreateTexture2D(&texDesc, NULL, &Textest[indexFrame]);
+				pd3dImmediateContext->CopyResource(Textest[indexFrame], backBuffer);
+				//D3DX11SaveTextureToFile(pd3dImmediateContext, Textest[indexFrame], D3DX11_IFF_BMP, L"save.bmp");
+				LPCSTR str = fileName.c_str();
+				int num = MultiByteToWideChar(0, 0, file, -1, NULL, 0);
+				wchar_t *wide = new wchar_t[num];
+				MultiByteToWideChar(0, 0, file, -1, wide, num);
+				D3DX11SaveTextureToFile(pd3dImmediateContext, Textest[indexFrame], D3DX11_IFF_BMP, wide);
+			}
+			vecEye.z += 1.0f;
+			vecAt.z += 1.0f;
+			g_Camera.SetViewParams(&vecEye, &vecAt);
+			_sleep(20);
+			indexFrame++;
+		}
+		if (flagShowVoxel){
+			flagShowVoxel = !flagShowVoxel;
+			indexFrame = 0;
+			D3DXVECTOR3 Eye(0.0f, 0.0f, y_min);
+			D3DXVECTOR3 At(0.0f, 0.0f, -9000.0f);
+			vecEye.z = y_min;
+			g_Camera.SetViewParams(&vecEye, &vecAt);
+		}
+	}
+	/*	if (len < 10000)
 	{
 		if (len % 1000 == 0)
 		{
@@ -807,4 +976,8 @@ void CALLBACK OnD3D11DestroyDevice( void* pUserContext )
     SAFE_RELEASE( g_pcbVSPerObject );
     SAFE_RELEASE( g_pcbPSPerObject );
     SAFE_RELEASE( g_pcbPSPerFrame );
+	for (size_t i = 0; i < 1000; i++)
+	{
+		SAFE_RELEASE(Textest[i]);
+	}
 }
