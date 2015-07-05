@@ -1,6 +1,8 @@
 # Refractive-Object-Rendering
 This is an implementation of [*Interactive Relighting of Dynamic Refractive Objects*](http://dl.acm.org/citation.cfm?id=1360634).
 
+We implement the pipeline using DirectX and CUDA.
+
 **The process includes 5 stages**:
 
 1. Voxelization
@@ -13,11 +15,25 @@ This is an implementation of [*Interactive Relighting of Dynamic Refractive Obje
 
 5. View pass
 
-We implement the pipeline using DirectX and CUDA.
 
-Here are some results:
 
-![test](./1.png)
+- - -
+**Here are some results:**
 
+-*Radiance*
+
+![Radiance](./2.png )
+
+-*Shadow*
+
+![Shadow](./4.png )
+
+-*Caustic*
+
+![Caustic](./1.png)
+
+-*Rendering with radiance*
+
+![Render with radince](./3.png)
 
 
