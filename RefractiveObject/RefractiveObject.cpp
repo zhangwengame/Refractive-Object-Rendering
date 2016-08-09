@@ -2057,20 +2057,20 @@ void CALLBACK OnD3D11DestroyDevice( void* pUserContext )
 
     g_Mesh11.Destroy();
 
-    SAFE_RELEASE( g_pVertexLayout11 );
+    SAFE_RELEASE(g_pVertexLayout11);
     SAFE_RELEASE(photonVertexLayout);
     
-    SAFE_RELEASE( g_pVertexBuffer );
-    SAFE_RELEASE( g_pIndexBuffer );
-    SAFE_RELEASE( g_pVertexShader );
-    SAFE_RELEASE( g_pPixelShader );
+    SAFE_RELEASE(g_pVertexBuffer);
+    SAFE_RELEASE(g_pIndexBuffer);
+    SAFE_RELEASE(g_pVertexShader);
+    SAFE_RELEASE(g_pPixelShader);
     SAFE_RELEASE(g_pPixelShader1);
-    SAFE_RELEASE( g_pSamLinear );
+    SAFE_RELEASE(g_pSamLinear);
     SAFE_RELEASE(photonVertexShader);
     SAFE_RELEASE(photonPixelShaderPos);
     SAFE_RELEASE(photonPixelShaderDir);
-    SAFE_RELEASE( g_pcbVSPerObject );
-    SAFE_RELEASE( g_pcbPSPerObject );
-    SAFE_RELEASE( g_pcbPSPerFrame );
+    SAFE_RELEASE(g_pcbVSPerObject);
+    SAFE_RELEASE(g_pcbPSPerObject);
+    SAFE_RELEASE(g_pcbPSPerFrame);
     g_pTextureRV->Release();
 }
