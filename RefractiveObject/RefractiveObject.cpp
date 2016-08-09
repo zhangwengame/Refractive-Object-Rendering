@@ -29,40 +29,40 @@ ID3D11Texture2D*            g_pTexRenderMS11 = NULL;        // Render target tex
 
 typedef struct SimpleVertex
 {
-	XMFLOAT3 Pos;
-	XMFLOAT2 Tex;
+    XMFLOAT3 Pos;
+    XMFLOAT2 Tex;
 }node;
 
 struct Vertex
 {
-	XMFLOAT3 Pos;
-	XMFLOAT4 Color;
+    XMFLOAT3 Pos;
+    XMFLOAT4 Color;
 };
 
 typedef struct R8G8B8
 {
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
-	unsigned char a;
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+    unsigned char a;
 }color;
 
 typedef struct v
 {
-	char voxel1;
-	char voxel2;
+    char voxel1;
+    char voxel2;
 }voxelSt;
 //--------------
 int mapSeq(float* in, float **out, int size, int length);
 int marchPhoton(unsigned char* ocTree, unsigned char* nTree_c, float* direction, float* radiance,
-	float* photondir, float* photonrad, float* photonpos, int exp, int num, float scale,
-	float** Table, int tableSize, float tableScale, float tmpn);
+    float* photondir, float* photonrad, float* photonpos, int exp, int num, float scale,
+    float** Table, int tableSize, float tableScale, float tmpn);
 int collectPhoton(unsigned char* ocTree, unsigned char* nTree_c, float* direction, float* radiance,
-	float* photondir, float* photonrad, float* photonpos, int exp, int num, float scale,
-	int **o_offset, int  **o_tableOffset, int **o_flag,
-	float p1x, float p1y, float p1z, float p2x, float p2y, float p2z,
-	float p3x, float p3y, float p3z, float p4x, float p4y, float p4z,
-	float tmpn);
+    float* photondir, float* photonrad, float* photonpos, int exp, int num, float scale,
+    int **o_offset, int  **o_tableOffset, int **o_flag,
+    float p1x, float p1y, float p1z, float p2x, float p2y, float p2z,
+    float p3x, float p3y, float p3z, float p4x, float p4y, float p4z,
+    float tmpn);
 void gaussian2D(float* texture_d, float** textureout, int len, int kernelsize, float sigma, float scale);
 int demapSeq(float** in);
 int constructOctree(unsigned char *ri, int exp, unsigned char **out, float delta);
@@ -174,7 +174,7 @@ UINT                        g_iCBPSPerObjectBind = 0;
 
 struct CB_PS_PER_FRAME
 {
-	D3DXVECTOR4 m_vLightDirAmbient;
+    D3DXVECTOR4 m_vLightDirAmbient;
 };
 UINT                        g_iCBPSPerFrameBind = 1;
 
@@ -265,9 +265,8 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     DXUTInit( true, true, NULL ); // Parse the command line, show msgboxes on error, no extra command line params
     DXUTSetCursorSettings( true, true ); // Show the cursor and clip it when in full screen
     DXUTCreateWindow( L"Advanced Computer Graphics" );
-	DXUTCreateDevice(D3D_FEATURE_LEVEL_9_2, true, windowWidth, windowHeight);
-	//DXUTCreateDevice(D3D_FEATURE_LEVEL_9_2, true, meshWidth, meshHeight);
-    //DXUTCreateDevice(true, 640, 480);
+    DXUTCreateDevice(D3D_FEATURE_LEVEL_9_2, true, windowWidth, windowHeight);
+
     DXUTMainLoop(); // Enter into the DXUT render loop
 
     return DXUTGetExitCode();
@@ -412,76 +411,76 @@ LRESULT CALLBACK MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bo
 //--------------------------------------------------------------------------------------
 void CALLBACK OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown, void* pUserContext )
 {
-	float scale = 200.0f;
+    float scale = 200.0f;
     if( bKeyDown )
     {
         switch( nChar )
         {
             case VK_F1:
                 g_bShowHelp = !g_bShowHelp; break;
-			case 'D':{
-				bRenderView = false;
-				vecEyeView.x += 0.1f * scale;
-				g_Camera.SetViewParams(&vecEyeView, &vecAtView);
-				break;
-			}
-			case 'A':{
-				bRenderView = false;
-				vecEyeView.x -= 0.1f * scale;
-				g_Camera.SetViewParams(&vecEyeView, &vecAtView);
-						 break;
-			}
-			case 'S':{
-				bRenderView = false;
-				vecEyeView.y -= 0.1f * scale;
-				g_Camera.SetViewParams(&vecEyeView, &vecAtView);
-						 break;
-			}
-			case 'W':{
-				bRenderView = false;
-				vecEyeView.y += 0.1f * scale;
-				g_Camera.SetViewParams(&vecEyeView, &vecAtView);
+            case 'D':{
+                bRenderView = false;
+                vecEyeView.x += 0.1f * scale;
+                g_Camera.SetViewParams(&vecEyeView, &vecAtView);
+                break;
+            }
+            case 'A':{
+                bRenderView = false;
+                vecEyeView.x -= 0.1f * scale;
+                g_Camera.SetViewParams(&vecEyeView, &vecAtView);
+                         break;
+            }
+            case 'S':{
+                bRenderView = false;
+                vecEyeView.y -= 0.1f * scale;
+                g_Camera.SetViewParams(&vecEyeView, &vecAtView);
+                         break;
+            }
+            case 'W':{
+                bRenderView = false;
+                vecEyeView.y += 0.1f * scale;
+                g_Camera.SetViewParams(&vecEyeView, &vecAtView);
 
-						 break;
-			}
-			case 'Q':{
-				bRenderView = false;
-				vecEyeView.z += 0.1f * scale;
-				g_Camera.SetViewParams(&vecEyeView, &vecAtView);
-						 break;
-			}
-			case 'E':{
-				bRenderView = false;
-				vecEyeView.z -= 0.1f * scale;
-				g_Camera.SetViewParams(&vecEyeView, &vecAtView);
-						 break;
-			}
-			case 'O':{
-				N = N - 0.1;
-				marchBool = false;
-				break;
-			}
-			case 'P':{
-				N = N + 0.1;
-				marchBool = false;
-				break;
-			}
-			case 'K':{
-				radScale = radScale + 1;
-				break;
-			}
-			case 'L':{
-				radScale = radScale - 1;
-				break;
-			}
-			case 'I':{
-				pureRad = !pureRad;
-				break;
-			}
-			case 'Y':{
-				bRenderShadow = !bRenderShadow;
-				break;
-			}
+                         break;
+            }
+            case 'Q':{
+                bRenderView = false;
+                vecEyeView.z += 0.1f * scale;
+                g_Camera.SetViewParams(&vecEyeView, &vecAtView);
+                         break;
+            }
+            case 'E':{
+                bRenderView = false;
+                vecEyeView.z -= 0.1f * scale;
+                g_Camera.SetViewParams(&vecEyeView, &vecAtView);
+                         break;
+            }
+            case 'O':{
+                N = N - 0.1;
+                marchBool = false;
+                break;
+            }
+            case 'P':{
+                N = N + 0.1;
+                marchBool = false;
+                break;
+            }
+            case 'K':{
+                radScale = radScale + 1;
+                break;
+            }
+            case 'L':{
+                radScale = radScale - 1;
+                break;
+            }
+            case 'I':{
+                pureRad = !pureRad;
+                break;
+            }
+            case 'Y':{
+                bRenderShadow = !bRenderShadow;
+                break;
+            }
         }
     }
 }
@@ -575,14 +574,14 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     ID3DBlob* pPixelShaderBuffer = NULL;
     V_RETURN( CompileShaderFromFile( L"BasicHLSL11_PS.hlsl", "PSMain", "ps_4_0_level_9_1", &pPixelShaderBuffer ) );
 
-	ID3DBlob* photonVertexShaderBuffer = NULL;
-	V_RETURN(CompileShaderFromFile(L"photonVS.hlsl", "VSMain", "vs_4_0_level_9_1", &photonVertexShaderBuffer));
+    ID3DBlob* photonVertexShaderBuffer = NULL;
+    V_RETURN(CompileShaderFromFile(L"photonVS.hlsl", "VSMain", "vs_4_0_level_9_1", &photonVertexShaderBuffer));
 
-	ID3DBlob* photonPixelShaderBufferPos = NULL;
-	V_RETURN(CompileShaderFromFile(L"photonPSPos.hlsl", "PSMain", "ps_4_0_level_9_1", &photonPixelShaderBufferPos));
+    ID3DBlob* photonPixelShaderBufferPos = NULL;
+    V_RETURN(CompileShaderFromFile(L"photonPSPos.hlsl", "PSMain", "ps_4_0_level_9_1", &photonPixelShaderBufferPos));
 
-	ID3DBlob* photonPixelShaderBufferDir = NULL;
-	V_RETURN(CompileShaderFromFile(L"photonPSDir.hlsl", "PSMain", "ps_4_0_level_9_1", &photonPixelShaderBufferDir));
+    ID3DBlob* photonPixelShaderBufferDir = NULL;
+    V_RETURN(CompileShaderFromFile(L"photonPSDir.hlsl", "PSMain", "ps_4_0_level_9_1", &photonPixelShaderBufferDir));
 
     // Create the shaders
     V_RETURN( pd3dDevice->CreateVertexShader( pVertexShaderBuffer->GetBufferPointer(),
@@ -593,18 +592,18 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
                                              pPixelShaderBuffer->GetBufferSize(), NULL, &g_pPixelShader ) );
     DXUT_SetDebugName( g_pPixelShader, "PSMain" );
 
-	//光子的3个shader
-	V_RETURN(pd3dDevice->CreateVertexShader(photonVertexShaderBuffer->GetBufferPointer(),
-		photonVertexShaderBuffer->GetBufferSize(), NULL, &photonVertexShader));
-	DXUT_SetDebugName(photonVertexShader, "VSMain");
+    //光子的3个shader
+    V_RETURN(pd3dDevice->CreateVertexShader(photonVertexShaderBuffer->GetBufferPointer(),
+        photonVertexShaderBuffer->GetBufferSize(), NULL, &photonVertexShader));
+    DXUT_SetDebugName(photonVertexShader, "VSMain");
 
-	V_RETURN(pd3dDevice->CreatePixelShader(photonPixelShaderBufferPos->GetBufferPointer(),
-		photonPixelShaderBufferPos->GetBufferSize(), NULL, &photonPixelShaderPos));
-	DXUT_SetDebugName(photonPixelShaderPos, "PSMain");
+    V_RETURN(pd3dDevice->CreatePixelShader(photonPixelShaderBufferPos->GetBufferPointer(),
+        photonPixelShaderBufferPos->GetBufferSize(), NULL, &photonPixelShaderPos));
+    DXUT_SetDebugName(photonPixelShaderPos, "PSMain");
 
-	V_RETURN(pd3dDevice->CreatePixelShader(photonPixelShaderBufferDir->GetBufferPointer(),
-		photonPixelShaderBufferDir->GetBufferSize(), NULL, &photonPixelShaderDir));
-	DXUT_SetDebugName(photonPixelShaderDir, "PSMain");
+    V_RETURN(pd3dDevice->CreatePixelShader(photonPixelShaderBufferDir->GetBufferPointer(),
+        photonPixelShaderBufferDir->GetBufferSize(), NULL, &photonPixelShaderDir));
+    DXUT_SetDebugName(photonPixelShaderDir, "PSMain");
 
     // Create our vertex input layout
     const D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -618,85 +617,85 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
 
     DXUT_SetDebugName( g_pVertexLayout11, "Primary" );
 
-	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
+    D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    };
 
-	// Create the input layout
-	V_RETURN(pd3dDevice->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), photonVertexShaderBuffer->GetBufferPointer(),
-		photonVertexShaderBuffer->GetBufferSize(), &photonVertexLayout));
+    // Create the input layout
+    V_RETURN(pd3dDevice->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), photonVertexShaderBuffer->GetBufferPointer(),
+        photonVertexShaderBuffer->GetBufferSize(), &photonVertexLayout));
 
-	DXUT_SetDebugName(photonVertexLayout, "Primary");
+    DXUT_SetDebugName(photonVertexLayout, "Primary");
 
 
     SAFE_RELEASE( pVertexShaderBuffer );
     SAFE_RELEASE( pPixelShaderBuffer );
-	SAFE_RELEASE(photonVertexShaderBuffer);
-	SAFE_RELEASE(photonPixelShaderBufferPos);
-	SAFE_RELEASE(photonPixelShaderBufferDir);
+    SAFE_RELEASE(photonVertexShaderBuffer);
+    SAFE_RELEASE(photonPixelShaderBufferPos);
+    SAFE_RELEASE(photonPixelShaderBufferDir);
 
     // Load the mesh
     //V_RETURN( g_Mesh11.Create( pd3dDevice, L"tiny\\tiny.sdkmesh", true ) );
-	//V_RETURN(g_Mesh11.Create(pd3dDevice, L"tiny\\h.sdkmesh", true));
-	V_RETURN(g_Mesh11.Create(pd3dDevice, L"k.sdkmesh", true));
-	//========== ===========
-	//为了最终成像
-	SimpleVertex imgVertices[] =
-	{
-		{ XMFLOAT3(-256, 0.0, 256.0),  XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT3(256.0, 0.0, 256.0), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT3(256.0, 0.0, -256.0),  XMFLOAT2(1.0f, 1.0f) },
-		{ XMFLOAT3(-256.0, 0.0, -256.0), XMFLOAT2(0.0f, 1.0f) }
-	};
+    //V_RETURN(g_Mesh11.Create(pd3dDevice, L"tiny\\h.sdkmesh", true));
+    V_RETURN(g_Mesh11.Create(pd3dDevice, L"k.sdkmesh", true));
+    //========== ===========
+    //为了最终成像
+    SimpleVertex imgVertices[] =
+    {
+        { XMFLOAT3(-256, 0.0, 256.0),  XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(256.0, 0.0, 256.0), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(256.0, 0.0, -256.0),  XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(-256.0, 0.0, -256.0), XMFLOAT2(0.0f, 1.0f) }
+    };
 
-	D3D11_BUFFER_DESC vbdi;
-	vbdi.Usage = D3D11_USAGE_IMMUTABLE;
-	vbdi.ByteWidth = sizeof(SimpleVertex) * 4;
-	vbdi.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbdi.CPUAccessFlags = 0;
-	vbdi.MiscFlags = 0;
-	vbdi.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA vinitDatai;
-	vinitDatai.pSysMem = imgVertices;
-	V_RETURN(pd3dDevice->CreateBuffer(&vbdi, &vinitDatai, &imgVertexBuf));
+    D3D11_BUFFER_DESC vbdi;
+    vbdi.Usage = D3D11_USAGE_IMMUTABLE;
+    vbdi.ByteWidth = sizeof(SimpleVertex) * 4;
+    vbdi.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    vbdi.CPUAccessFlags = 0;
+    vbdi.MiscFlags = 0;
+    vbdi.StructureByteStride = 0;
+    D3D11_SUBRESOURCE_DATA vinitDatai;
+    vinitDatai.pSysMem = imgVertices;
+    V_RETURN(pd3dDevice->CreateBuffer(&vbdi, &vinitDatai, &imgVertexBuf));
 
-	UINT imgIndices[] = {
-		// front face
-		0, 1, 3,
-		1, 2, 3
-	};
+    UINT imgIndices[] = {
+        // front face
+        0, 1, 3,
+        1, 2, 3
+    };
 
-	D3D11_BUFFER_DESC ibdi;
-	ibdi.Usage = D3D11_USAGE_IMMUTABLE;
-	ibdi.ByteWidth = sizeof(UINT) * 6;
-	ibdi.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibdi.CPUAccessFlags = 0;
-	ibdi.MiscFlags = 0;
-	ibdi.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA iinitDatai;
-	iinitDatai.pSysMem = imgIndices;
-	V_RETURN(pd3dDevice->CreateBuffer(&ibdi, &iinitDatai, &imgIndexBuf));
+    D3D11_BUFFER_DESC ibdi;
+    ibdi.Usage = D3D11_USAGE_IMMUTABLE;
+    ibdi.ByteWidth = sizeof(UINT) * 6;
+    ibdi.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    ibdi.CPUAccessFlags = 0;
+    ibdi.MiscFlags = 0;
+    ibdi.StructureByteStride = 0;
+    D3D11_SUBRESOURCE_DATA iinitDatai;
+    iinitDatai.pSysMem = imgIndices;
+    V_RETURN(pd3dDevice->CreateBuffer(&ibdi, &iinitDatai, &imgIndexBuf));
 
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = pd3dDevice->CreateSamplerState(&sampDesc, &g_pSamLinear);
+    D3D11_SAMPLER_DESC sampDesc;
+    ZeroMemory(&sampDesc, sizeof(sampDesc));
+    sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    sampDesc.MinLOD = 0;
+    sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+    hr = pd3dDevice->CreateSamplerState(&sampDesc, &g_pSamLinear);
 
-	if (FAILED(hr))
-		return hr;
+    if (FAILED(hr))
+        return hr;
 
-	 /*Load the Texture*/
-	hr = D3DX11CreateShaderResourceViewFromFile(pd3dDevice, L"seafloor.dds", NULL, NULL, &g_pTextureRV, NULL);
-	if (FAILED(hr))
-		return hr;
+     /*Load the Texture*/
+    hr = D3DX11CreateShaderResourceViewFromFile(pd3dDevice, L"seafloor.dds", NULL, NULL, &g_pTextureRV, NULL);
+    if (FAILED(hr))
+        return hr;
 
     // Setup constant buffers
     D3D11_BUFFER_DESC Desc;
@@ -717,126 +716,122 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     V_RETURN( pd3dDevice->CreateBuffer( &Desc, NULL, &g_pcbPSPerFrame ) );
     DXUT_SetDebugName( g_pcbPSPerFrame, "CB_PS_PER_FRAME" );
 
-	UINT Strides[1];
-	UINT Offsets[1];
+    UINT Strides[1];
+    UINT Offsets[1];
 
-	Strides[0] = sizeof(SimpleVertex);
-	Offsets[0] = 0;
-	ID3D11Buffer* pVB[1];
-	pVB[0] = g_Mesh11.GetVB11(0, 0);
-	Strides[0] = (UINT)g_Mesh11.GetVertexStride(0, 0);
-	Offsets[0] = 0;
-	int size = g_Mesh11.GetNumVertices(0, 0);
+    Strides[0] = sizeof(SimpleVertex);
+    Offsets[0] = 0;
+    ID3D11Buffer* pVB[1];
+    pVB[0] = g_Mesh11.GetVB11(0, 0);
+    Strides[0] = (UINT)g_Mesh11.GetVertexStride(0, 0);
+    Offsets[0] = 0;
+    int size = g_Mesh11.GetNumVertices(0, 0);
 
-	ID3D11Buffer * cpubuffer = NULL;
-	D3D11_BUFFER_DESC abufferDesc;
-	ZeroMemory(&abufferDesc, sizeof(abufferDesc));
-	pVB[0]->GetDesc(&abufferDesc);
-	abufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	abufferDesc.Usage = D3D11_USAGE_STAGING;
-	abufferDesc.BindFlags = 0;
-	abufferDesc.MiscFlags = 0;
+    ID3D11Buffer * cpubuffer = NULL;
+    D3D11_BUFFER_DESC abufferDesc;
+    ZeroMemory(&abufferDesc, sizeof(abufferDesc));
+    pVB[0]->GetDesc(&abufferDesc);
+    abufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+    abufferDesc.Usage = D3D11_USAGE_STAGING;
+    abufferDesc.BindFlags = 0;
+    abufferDesc.MiscFlags = 0;
 
-	//ID3D11Buffer* pDebugBuffer = NULL;
-	pd3dDevice->CreateBuffer(&abufferDesc, NULL, &cpubuffer);
-	pd3dImmediateContext->CopyResource(cpubuffer, pVB[0]);
-	D3D11_MAPPED_SUBRESOURCE resultResources;
-	ZeroMemory(&resultResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	pd3dImmediateContext->Map(cpubuffer, 0, D3D11_MAP_READ, 0, &resultResources);
-	node * ptn = (node *)(resultResources.pData);
+    //ID3D11Buffer* pDebugBuffer = NULL;
+    pd3dDevice->CreateBuffer(&abufferDesc, NULL, &cpubuffer);
+    pd3dImmediateContext->CopyResource(cpubuffer, pVB[0]);
+    D3D11_MAPPED_SUBRESOURCE resultResources;
+    ZeroMemory(&resultResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
+    pd3dImmediateContext->Map(cpubuffer, 0, D3D11_MAP_READ, 0, &resultResources);
+    node * ptn = (node *)(resultResources.pData);
 
-	node* m_pGPUTestResult = new node[size];
-	for (int i = 0; i<size; i++)
-	{
-		m_pGPUTestResult[i].Pos.x = ptn[i].Pos.x;
-		m_pGPUTestResult[i].Pos.y = ptn[i].Pos.y;
-		m_pGPUTestResult[i].Pos.y = ptn[i].Pos.z;
-		if (ptn[i].Pos.x > x_max)
-		{
-			x_max = ptn[i].Pos.x;
-		}
-		if (ptn[i].Pos.x < x_min)
-		{
-			x_min = ptn[i].Pos.x;
-		}
-		if (ptn[i].Pos.y > y_max)
-		{
-			y_max = ptn[i].Pos.y;
-		}
-		if (ptn[i].Pos.y < y_min)
-		{
-			y_min = ptn[i].Pos.y;
-		}
-		if (ptn[i].Pos.z > z_max)
-		{
-			z_max = ptn[i].Pos.z;
-		}
-		if (ptn[i].Pos.z < z_min)
-		{
-			z_min = ptn[i].Pos.z;
-		}
-	}
+    node* m_pGPUTestResult = new node[size];
+    for (int i = 0; i<size; i++)
+    {
+        m_pGPUTestResult[i].Pos.x = ptn[i].Pos.x;
+        m_pGPUTestResult[i].Pos.y = ptn[i].Pos.y;
+        m_pGPUTestResult[i].Pos.y = ptn[i].Pos.z;
+        if (ptn[i].Pos.x > x_max)
+        {
+            x_max = ptn[i].Pos.x;
+        }
+        if (ptn[i].Pos.x < x_min)
+        {
+            x_min = ptn[i].Pos.x;
+        }
+        if (ptn[i].Pos.y > y_max)
+        {
+            y_max = ptn[i].Pos.y;
+        }
+        if (ptn[i].Pos.y < y_min)
+        {
+            y_min = ptn[i].Pos.y;
+        }
+        if (ptn[i].Pos.z > z_max)
+        {
+            z_max = ptn[i].Pos.z;
+        }
+        if (ptn[i].Pos.z < z_min)
+        {
+            z_min = ptn[i].Pos.z;
+        }
+    }
 
-	x_min -= 20;
-	y_min -= 20;
-	z_min -= 20;
-	x_max += 20;
-	y_max += 20;
-	z_max += 20;
+    x_min -= 20;
+    y_min -= 20;
+    z_min -= 20;
+    x_max += 20;
+    y_max += 20;
+    z_max += 20;
 
-	meshWidth = ((int)(x_max - x_min) / 100);
-	if ((int)(x_max - x_min) % 100 != 0)
-		meshWidth++;
-	meshWidth *= 100;
-	meshHeight = ((int)(y_max - y_min) / 100);
-	if ((int)(y_max - y_min) % 100 != 0)
-		meshHeight++;
-	meshHeight *= 100;
-	meshDepth = ((int)(z_max - z_min) / 100);
-	if ((int)(z_max - z_min) % 100 != 0)
-		meshDepth++;
-	meshDepth *= 100;
+    meshWidth = ((int)(x_max - x_min) / 100);
+    if ((int)(x_max - x_min) % 100 != 0)
+        meshWidth++;
+    meshWidth *= 100;
+    meshHeight = ((int)(y_max - y_min) / 100);
+    if ((int)(y_max - y_min) % 100 != 0)
+        meshHeight++;
+    meshHeight *= 100;
+    meshDepth = ((int)(z_max - z_min) / 100);
+    if ((int)(z_max - z_min) % 100 != 0)
+        meshDepth++;
+    meshDepth *= 100;
 
-	w_long = max(fabs(x_max), fabs(x_min));
-	h_long = max(fabs(z_max), fabs(z_min));
-	d_long = max(fabs(y_max), fabs(y_min));
+    w_long = max(fabs(x_max), fabs(x_min));
+    h_long = max(fabs(z_max), fabs(z_min));
+    d_long = max(fabs(y_max), fabs(y_min));
 
-	float max = max(w_long, max(h_long, d_long));
-	//if (max > windowHeight / 2)
-	//	meshScale = windowHeight / 2.0 / max;
-	//y_min = -windowHeight / 2;
-	//meshHeight *= meshScale;
-	meshHeight = windowHeight;
-	pd3dImmediateContext->Unmap(cpubuffer, 0);
-	cpubuffer->Release();
-	
-	V_RETURN(g_DialogResourceManager.OnD3D11CreateDevice(pd3dDevice, pd3dImmediateContext));
-	V_RETURN(g_D3DSettingsDlg.OnD3D11CreateDevice(pd3dDevice));
-	g_pTxtHelper = new CDXUTTextHelper(pd3dDevice, pd3dImmediateContext, &g_DialogResourceManager, 15);
+    float max = max(w_long, max(h_long, d_long));
 
-	WCHAR strPath[MAX_PATH];
-	V_RETURN(DXUTFindDXSDKMediaFileCch(strPath, MAX_PATH, L"stpeters_cross.dds"));
-	//V_RETURN(DXUTFindDXSDKMediaFileCch(strPath, MAX_PATH, L"uffizi_cross.dds"));
-	
-	ID3D11Texture2D* pCubeTexture = NULL;
-	ID3D11ShaderResourceView* pCubeRV = NULL;
-	UINT SupportCaps = 0;
+    meshHeight = windowHeight;
+    pd3dImmediateContext->Unmap(cpubuffer, 0);
+    cpubuffer->Release();
+    
+    V_RETURN(g_DialogResourceManager.OnD3D11CreateDevice(pd3dDevice, pd3dImmediateContext));
+    V_RETURN(g_D3DSettingsDlg.OnD3D11CreateDevice(pd3dDevice));
+    g_pTxtHelper = new CDXUTTextHelper(pd3dDevice, pd3dImmediateContext, &g_DialogResourceManager, 15);
 
-	pd3dDevice->CheckFormatSupport(DXGI_FORMAT_R32G32B32A32_FLOAT, &SupportCaps);
-	if (SupportCaps & D3D11_FORMAT_SUPPORT_TEXTURECUBE &&
-		SupportCaps & D3D11_FORMAT_SUPPORT_RENDER_TARGET &&
-		SupportCaps & D3D11_FORMAT_SUPPORT_TEXTURE2D)
-	{
-		D3DX11_IMAGE_LOAD_INFO LoadInfo;
-		LoadInfo.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		V_RETURN(D3DX11CreateShaderResourceViewFromFile(pd3dDevice, strPath, &LoadInfo, NULL, &pCubeRV, NULL));
-		DXUT_SetDebugName(pCubeRV, "uffizi_cross.dds");
-		pCubeRV->GetResource((ID3D11Resource**)&pCubeTexture);
-		DXUT_SetDebugName(pCubeTexture, "uffizi_cross.dds");
-		V_RETURN(g_Skybox.OnD3D11CreateDevice(pd3dDevice, 50, pCubeTexture, pCubeRV));
-	}
-	else
-		return E_FAIL;
+    WCHAR strPath[MAX_PATH];
+    V_RETURN(DXUTFindDXSDKMediaFileCch(strPath, MAX_PATH, L"stpeters_cross.dds"));
+
+    ID3D11Texture2D* pCubeTexture = NULL;
+    ID3D11ShaderResourceView* pCubeRV = NULL;
+    UINT SupportCaps = 0;
+
+    pd3dDevice->CheckFormatSupport(DXGI_FORMAT_R32G32B32A32_FLOAT, &SupportCaps);
+    if (SupportCaps & D3D11_FORMAT_SUPPORT_TEXTURECUBE &&
+        SupportCaps & D3D11_FORMAT_SUPPORT_RENDER_TARGET &&
+        SupportCaps & D3D11_FORMAT_SUPPORT_TEXTURE2D)
+    {
+        D3DX11_IMAGE_LOAD_INFO LoadInfo;
+        LoadInfo.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        V_RETURN(D3DX11CreateShaderResourceViewFromFile(pd3dDevice, strPath, &LoadInfo, NULL, &pCubeRV, NULL));
+        DXUT_SetDebugName(pCubeRV, "uffizi_cross.dds");
+        pCubeRV->GetResource((ID3D11Resource**)&pCubeTexture);
+        DXUT_SetDebugName(pCubeTexture, "uffizi_cross.dds");
+        V_RETURN(g_Skybox.OnD3D11CreateDevice(pd3dDevice, 50, pCubeTexture, pCubeRV));
+    }
+    else
+        return E_FAIL;
 
     return S_OK;
 }
@@ -849,7 +844,7 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, IDXGISwapCha
                                           const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext )
 {
     HRESULT hr;
-	g_Skybox.OnD3D11ResizedSwapChain(pBackBufferSurfaceDesc);
+    g_Skybox.OnD3D11ResizedSwapChain(pBackBufferSurfaceDesc);
     V_RETURN( g_DialogResourceManager.OnD3D11ResizedSwapChain( pd3dDevice, pBackBufferSurfaceDesc ) );
     V_RETURN( g_D3DSettingsDlg.OnD3D11ResizedSwapChain( pd3dDevice, pBackBufferSurfaceDesc ) );
 
@@ -859,115 +854,104 @@ HRESULT CALLBACK OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, IDXGISwapCha
     g_Camera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
     g_Camera.SetButtonMasks( MOUSE_MIDDLE_BUTTON, MOUSE_WHEEL, MOUSE_LEFT_BUTTON );
 
-    //g_HUD.SetLocation( pBackBufferSurfaceDesc->Width - 170, 0 );
-    //g_HUD.SetSize( 170, 170 );
-    //g_SampleUI.SetLocation( pBackBufferSurfaceDesc->Width - 170, pBackBufferSurfaceDesc->Height - 300 );
-    //g_SampleUI.SetSize( 170, 300 );
-
     return S_OK;
 }
 
 
 bool toBackTextureDown = false;
 ID3D11RenderTargetView*     resTVBack;
-ID3D11Texture2D*			resTexBack = NULL;
-ID3D11Texture2D*			resTexBackCopy = NULL;
+ID3D11Texture2D*            resTexBack = NULL;
+ID3D11Texture2D*            resTexBackCopy = NULL;
 //--------------------------------------------------------------------------------------
 // Get the background image from the skybox 
 //--------------------------------------------------------------------------------------
 void renderToBackTexture(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext){
-	if (toBackTextureDown)
-		return;
-	toBackTextureDown = true;
-	UINT Strides[1];
-	ID3D11Buffer* pVB[1];
-	UINT Offsets[1];
-	//pVB[0] = g_Mesh11.GetVB11(0, 0);
-	UINT stride = sizeof(SimpleVertex);
-	UINT offset = 0;
+    if (toBackTextureDown)
+        return;
+    toBackTextureDown = true;
+    UINT Strides[1];
+    ID3D11Buffer* pVB[1];
+    UINT Offsets[1];
+    //pVB[0] = g_Mesh11.GetVB11(0, 0);
+    UINT stride = sizeof(SimpleVertex);
+    UINT offset = 0;
 
-	//the description of the texture 
-	D3D11_TEXTURE2D_DESC resTexDesc;
-	ZeroMemory(&resTexDesc, sizeof(resTexDesc));
-	IDXGISwapChain*	pSwapChain = DXUTGetDXGISwapChain();
-	ID3D11Texture2D *backBuffer(NULL);
+    //the description of the texture 
+    D3D11_TEXTURE2D_DESC resTexDesc;
+    ZeroMemory(&resTexDesc, sizeof(resTexDesc));
+    IDXGISwapChain*    pSwapChain = DXUTGetDXGISwapChain();
+    ID3D11Texture2D *backBuffer(NULL);
 
-	pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-	backBuffer->GetDesc(&resTexDesc);
-	//resTexDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	//resTexDesc.BindFlags = 0;
-	//resTexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	//resTexDesc.Usage = D3D11_USAGE_STAGING;
-	resTexDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
-	backBuffer->Release();
+    pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+    backBuffer->GetDesc(&resTexDesc);
+    resTexDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
+    backBuffer->Release();
 
-	//the texture2D binded with the render target view
-	HRESULT hr = pd3dDevice->CreateTexture2D(&resTexDesc, NULL, &resTexBack);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    //the texture2D binded with the render target view
+    HRESULT hr = pd3dDevice->CreateTexture2D(&resTexDesc, NULL, &resTexBack);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        //ErrorMessage(hr);
+        return;
+    }
 
-	//new render target view description
-	D3D11_RENDER_TARGET_VIEW_DESC resTVDesc;
-	ZeroMemory(&resTVBack, sizeof(resTVBack));
-	//g_pRenderTargetView[0]->GetDesc(&resTV);
-	ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
-	pRTV->GetDesc(&resTVDesc);
-	resTVDesc.Format = resTexDesc.Format;
-	resTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	resTVDesc.Texture2D.MipSlice = 0;
+    //new render target view description
+    D3D11_RENDER_TARGET_VIEW_DESC resTVDesc;
+    ZeroMemory(&resTVBack, sizeof(resTVBack));
+    ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
+    pRTV->GetDesc(&resTVDesc);
+    resTVDesc.Format = resTexDesc.Format;
+    resTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+    resTVDesc.Texture2D.MipSlice = 0;
 
-	//create the targetview
-	hr = pd3dDevice->CreateRenderTargetView(resTexBack, &resTVDesc, &resTVBack);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    //create the targetview
+    hr = pd3dDevice->CreateRenderTargetView(resTexBack, &resTVDesc, &resTVBack);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        return;
+    }
 
-	//clear
-	ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
-	pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	pd3dImmediateContext->ClearRenderTargetView(resTVBack, ClearColor);
-	pd3dImmediateContext->OMSetRenderTargets(1, &resTVBack, pDSV);
+    //clear
+    ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
+    pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    pd3dImmediateContext->ClearRenderTargetView(resTVBack, ClearColor);
+    pd3dImmediateContext->OMSetRenderTargets(1, &resTVBack, pDSV);
 
-	D3DXMATRIX mWorldViewProjection;
-	D3DXMATRIX mWorld;
-	D3DXMATRIX mView;
-	D3DXMATRIX mProj;
+    D3DXMATRIX mWorldViewProjection;
+    D3DXMATRIX mWorld;
+    D3DXMATRIX mView;
+    D3DXMATRIX mProj;
 
-	D3DXVECTOR3 vecEyeN(vecEyeView.x, vecEyeView.z, vecEyeView.y);
-	D3DXVECTOR3 vecAtN(vecAt.x, vecAt.z, vecAt.y);
+    D3DXVECTOR3 vecEyeN(vecEyeView.x, vecEyeView.z, vecEyeView.y);
+    D3DXVECTOR3 vecAtN(vecAt.x, vecAt.z, vecAt.y);
 
-	g_Camera.SetViewParams(&vecEyeN, &vecAtN);
-	mWorld = *g_Camera.GetWorldMatrix();
-	mProj = *g_Camera.GetProjMatrix();
-	mView = *g_Camera.GetViewMatrix();
-	mWorldViewProjection = mWorld * mView * mProj;
+    g_Camera.SetViewParams(&vecEyeN, &vecAtN);
+    mWorld = *g_Camera.GetWorldMatrix();
+    mProj = *g_Camera.GetProjMatrix();
+    mView = *g_Camera.GetViewMatrix();
+    mWorldViewProjection = mWorld * mView * mProj;
 
-	g_Skybox.D3D11Render(&mWorldViewProjection, pd3dImmediateContext);
+    g_Skybox.D3D11Render(&mWorldViewProjection, pd3dImmediateContext);
 
-	//copy the texture rendered
-	D3D11_TEXTURE2D_DESC copyDesc;
-	resTexBack->GetDesc(&copyDesc);
-	copyDesc.BindFlags = 0;
-	copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-	copyDesc.Usage = D3D11_USAGE_STAGING;
-	//copyDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	copyDesc.MiscFlags = 0;
-	hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &resTexBackCopy);
-	if (FAILED(hr))
-		return;
+    //copy the texture rendered
+    D3D11_TEXTURE2D_DESC copyDesc;
+    resTexBack->GetDesc(&copyDesc);
+    copyDesc.BindFlags = 0;
+    copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+    copyDesc.Usage = D3D11_USAGE_STAGING;
+    //copyDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    copyDesc.MiscFlags = 0;
+    hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &resTexBackCopy);
+    if (FAILED(hr))
+        return;
 
-	pd3dImmediateContext->CopyResource(resTexBackCopy, resTexBack);
-	pd3dImmediateContext->OMSetRenderTargets(1, &pRTV, pDSV);
+    pd3dImmediateContext->CopyResource(resTexBackCopy, resTexBack);
+    pd3dImmediateContext->OMSetRenderTargets(1, &pRTV, pDSV);
 
 }
 
@@ -976,8 +960,8 @@ ID3D11Buffer * lightVertexBuf = NULL;
 ID3D11Buffer * lightIndexBuf = NULL;
 
 ID3D11RenderTargetView*     lightTV;
-ID3D11Texture2D*			lightTex = NULL;
-ID3D11Texture2D*			lightTexCopy = NULL;
+ID3D11Texture2D*            lightTex = NULL;
+ID3D11Texture2D*            lightTexCopy = NULL;
 
 float posLight[262144][3] = { 0 };
 float dirLight[262144][3] = { 0 };
@@ -987,292 +971,288 @@ D3DXVECTOR3 vecAtLight(0.0f, 0.0f, 0.0f);
 int photonNumLight = 0;
 
 void renderLight(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext){
-	HRESULT hr;
-	//========== ===========
-	Vertex lightVertices[] =
-	{
-		{ XMFLOAT3(x_min, y_min, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_min, y_max, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_max, y_max, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_max, y_min, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_min, y_min, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_min, y_max, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_max, y_max, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_max, y_min, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
-	};
+    HRESULT hr;
+    //========== ===========
+    Vertex lightVertices[] =
+    {
+        { XMFLOAT3(x_min, y_min, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_min, y_max, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_max, y_max, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_max, y_min, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_min, y_min, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_min, y_max, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_max, y_max, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_max, y_min, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
+    };
 
-	D3D11_BUFFER_DESC vbdLight;
-	vbdLight.Usage = D3D11_USAGE_IMMUTABLE;
-	vbdLight.ByteWidth = sizeof(Vertex) * 8;
-	vbdLight.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbdLight.CPUAccessFlags = 0;
-	vbdLight.MiscFlags = 0;
-	vbdLight.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA vinitDataLight;
-	vinitDataLight.pSysMem = lightVertices;
-	hr = pd3dDevice->CreateBuffer(&vbdLight, &vinitDataLight, &lightVertexBuf);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    D3D11_BUFFER_DESC vbdLight;
+    vbdLight.Usage = D3D11_USAGE_IMMUTABLE;
+    vbdLight.ByteWidth = sizeof(Vertex) * 8;
+    vbdLight.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    vbdLight.CPUAccessFlags = 0;
+    vbdLight.MiscFlags = 0;
+    vbdLight.StructureByteStride = 0;
+    D3D11_SUBRESOURCE_DATA vinitDataLight;
+    vinitDataLight.pSysMem = lightVertices;
+    hr = pd3dDevice->CreateBuffer(&vbdLight, &vinitDataLight, &lightVertexBuf);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        //ErrorMessage(hr);
+        return;
+    }
 
-	UINT lightIndices[] = {
-		// front face
-		0, 1, 2,
-		0, 2, 3,
+    UINT lightIndices[] = {
+        // front face
+        0, 1, 2,
+        0, 2, 3,
 
-		// back face
-		4, 6, 5,
-		4, 7, 6,
+        // back face
+        4, 6, 5,
+        4, 7, 6,
 
-		// left face
-		4, 5, 1,
-		4, 1, 0,
+        // left face
+        4, 5, 1,
+        4, 1, 0,
 
-		// right face
-		3, 2, 6,
-		3, 6, 7,
+        // right face
+        3, 2, 6,
+        3, 6, 7,
 
-		// top face
-		1, 5, 6,
-		1, 6, 2,
+        // top face
+        1, 5, 6,
+        1, 6, 2,
 
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
+        // bottom face
+        4, 0, 3,
+        4, 3, 7
+    };
 
-	D3D11_BUFFER_DESC ibdLight;
-	ibdLight.Usage = D3D11_USAGE_IMMUTABLE;
-	ibdLight.ByteWidth = sizeof(UINT) * 36;
-	ibdLight.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibdLight.CPUAccessFlags = 0;
-	ibdLight.MiscFlags = 0;
-	ibdLight.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA iinitDataLight;
-	iinitDataLight.pSysMem = lightIndices;
-	hr = pd3dDevice->CreateBuffer(&ibdLight, &iinitDataLight, &lightIndexBuf);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    D3D11_BUFFER_DESC ibdLight;
+    ibdLight.Usage = D3D11_USAGE_IMMUTABLE;
+    ibdLight.ByteWidth = sizeof(UINT) * 36;
+    ibdLight.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    ibdLight.CPUAccessFlags = 0;
+    ibdLight.MiscFlags = 0;
+    ibdLight.StructureByteStride = 0;
+    D3D11_SUBRESOURCE_DATA iinitDataLight;
+    iinitDataLight.pSysMem = lightIndices;
+    hr = pd3dDevice->CreateBuffer(&ibdLight, &iinitDataLight, &lightIndexBuf);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        //ErrorMessage(hr);
+        return;
+    }
 
-	UINT Strides[1];
-	UINT Offsets[1];
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
+    UINT Strides[1];
+    UINT Offsets[1];
+    UINT stride = sizeof(Vertex);
+    UINT offset = 0;
 
-	//创建target对应texture的描述
-	D3D11_TEXTURE2D_DESC resTexDesc;
-	ZeroMemory(&resTexDesc, sizeof(resTexDesc));
-	IDXGISwapChain*	pSwapChain = DXUTGetDXGISwapChain();
-	ID3D11Texture2D *backBuffer(NULL);
-	pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-	backBuffer->GetDesc(&resTexDesc);
-	resTexDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	resTexDesc.BindFlags = 0;
-	//resTexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	//resTexDesc.Usage = D3D11_USAGE_STAGING;
-	resTexDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
-	backBuffer->Release();
+    //创建target对应texture的描述
+    D3D11_TEXTURE2D_DESC resTexDesc;
+    ZeroMemory(&resTexDesc, sizeof(resTexDesc));
+    IDXGISwapChain*    pSwapChain = DXUTGetDXGISwapChain();
+    ID3D11Texture2D *backBuffer(NULL);
+    pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+    backBuffer->GetDesc(&resTexDesc);
+    resTexDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    resTexDesc.BindFlags = 0;
+    resTexDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
+    backBuffer->Release();
 
-	//target对应的texture2D
-	hr = pd3dDevice->CreateTexture2D(&resTexDesc, NULL, &lightTex);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    //target对应的texture2D
+    hr = pd3dDevice->CreateTexture2D(&resTexDesc, NULL, &lightTex);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        //ErrorMessage(hr);
+        return;
+    }
 
-	//new render target view
-	D3D11_RENDER_TARGET_VIEW_DESC resTVDesc;
-	ZeroMemory(&resTVDesc, sizeof(resTVDesc));
-	//g_pRenderTargetView[0]->GetDesc(&resTV);
-	ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
-	pRTV->GetDesc(&resTVDesc);
-	resTVDesc.Format = resTexDesc.Format;
-	resTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	resTVDesc.Texture2D.MipSlice = 0;
+    //new render target view
+    D3D11_RENDER_TARGET_VIEW_DESC resTVDesc;
+    ZeroMemory(&resTVDesc, sizeof(resTVDesc));
+    ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
+    pRTV->GetDesc(&resTVDesc);
+    resTVDesc.Format = resTexDesc.Format;
+    resTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+    resTVDesc.Texture2D.MipSlice = 0;
 
-	//创建 targetview
-	hr = pd3dDevice->CreateRenderTargetView(lightTex, &resTVDesc, &lightTV);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    //创建 targetview
+    hr = pd3dDevice->CreateRenderTargetView(lightTex, &resTVDesc, &lightTV);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        return;
+    }
 
-	//clear
-	ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
-	pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	pd3dImmediateContext->ClearRenderTargetView(lightTV, ClearColor);
-	pd3dImmediateContext->OMSetRenderTargets(1, &lightTV, pDSV);
+    //clear
+    ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
+    pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    pd3dImmediateContext->ClearRenderTargetView(lightTV, ClearColor);
+    pd3dImmediateContext->OMSetRenderTargets(1, &lightTV, pDSV);
 
-	D3DXMATRIX mWorldViewProjection;
-	D3DXVECTOR3 vLightDir;
-	D3DXMATRIX mWorld;
-	D3DXMATRIX mView;
-	D3DXMATRIX mProj;
-	D3DXMATRIX mTmp;
+    D3DXMATRIX mWorldViewProjection;
+    D3DXVECTOR3 vLightDir;
+    D3DXMATRIX mWorld;
+    D3DXMATRIX mView;
+    D3DXMATRIX mProj;
+    D3DXMATRIX mTmp;
 
-	//更新常数buffer
-	// Per frame cb update
-	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	V(pd3dImmediateContext->Map(g_pcbPSPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
-	CB_PS_PER_FRAME* pPerFrame = (CB_PS_PER_FRAME*)MappedResource.pData;
-	float fAmbient = 0.1f;
-	pPerFrame->m_vLightDirAmbient = D3DXVECTOR4(vecEyeLight.x, vecEyeLight.y, vecEyeLight.z, fAmbient);
-	pd3dImmediateContext->Unmap(g_pcbPSPerFrame, 0);
-	pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerFrameBind, 1, &g_pcbPSPerFrame);
+    //更新常数buffer
+    // Per frame cb update
+    D3D11_MAPPED_SUBRESOURCE MappedResource;
+    V(pd3dImmediateContext->Map(g_pcbPSPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+    CB_PS_PER_FRAME* pPerFrame = (CB_PS_PER_FRAME*)MappedResource.pData;
+    float fAmbient = 0.1f;
+    pPerFrame->m_vLightDirAmbient = D3DXVECTOR4(vecEyeLight.x, vecEyeLight.y, vecEyeLight.z, fAmbient);
+    pd3dImmediateContext->Unmap(g_pcbPSPerFrame, 0);
+    pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerFrameBind, 1, &g_pcbPSPerFrame);
 
-	pd3dImmediateContext->IASetInputLayout(photonVertexLayout);
-	pd3dImmediateContext->IASetVertexBuffers(0, 1, &lightVertexBuf, &stride, &offset);
-	pd3dImmediateContext->IASetIndexBuffer(lightIndexBuf, DXGI_FORMAT_R32_UINT, 0);
+    pd3dImmediateContext->IASetInputLayout(photonVertexLayout);
+    pd3dImmediateContext->IASetVertexBuffers(0, 1, &lightVertexBuf, &stride, &offset);
+    pd3dImmediateContext->IASetIndexBuffer(lightIndexBuf, DXGI_FORMAT_R32_UINT, 0);
 
-	pd3dImmediateContext->VSSetShader(photonVertexShader, NULL, 0);
-	pd3dImmediateContext->PSSetShader(photonPixelShaderPos, NULL, 0);
+    pd3dImmediateContext->VSSetShader(photonVertexShader, NULL, 0);
+    pd3dImmediateContext->PSSetShader(photonPixelShaderPos, NULL, 0);
 
-	// Set the per object constant data
-	D3DXMATRIX m_orthoMatrix;
-	XMMatrixScaling(0.5f, 0.5f, 0.5f);
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
-	D3DXMATRIX scale;
-	//D3DXMatrixScaling(&scale, 0.5f, 0.5f, 0.5f);
-	D3DXMatrixScaling(&scale, meshScale, meshScale, meshScale);
+    // Set the per object constant data
+    D3DXMATRIX m_orthoMatrix;
+    XMMatrixScaling(0.5f, 0.5f, 0.5f);
+    D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
+    D3DXMATRIX scale;
+    //D3DXMatrixScaling(&scale, 0.5f, 0.5f, 0.5f);
+    D3DXMatrixScaling(&scale, meshScale, meshScale, meshScale);
 
-	D3DXMATRIX dView;
-	D3DXVECTOR3 dEye(vecEyeLight.x, vecEyeLight.y, vecEyeLight.z);
-	D3DXVECTOR3 dAt(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 dUp(0.5f, 0.5f, 1.0f);
-	D3DXMatrixLookAtLH(&dView, &dEye, &dAt, &dUp);
-	D3DXMATRIX dWorld;
-	D3DXMatrixIdentity(&dWorld);
-	D3DXMATRIX dProj;
-	D3DXMatrixPerspectiveFovLH(&dProj, D3DX_PI / 4, 1.0f, 1.0f, 6000.0f);
+    D3DXMATRIX dView;
+    D3DXVECTOR3 dEye(vecEyeLight.x, vecEyeLight.y, vecEyeLight.z);
+    D3DXVECTOR3 dAt(0.0f, 0.0f, 0.0f);
+    D3DXVECTOR3 dUp(0.5f, 0.5f, 1.0f);
+    D3DXMatrixLookAtLH(&dView, &dEye, &dAt, &dUp);
+    D3DXMATRIX dWorld;
+    D3DXMatrixIdentity(&dWorld);
+    D3DXMATRIX dProj;
+    D3DXMatrixPerspectiveFovLH(&dProj, D3DX_PI / 4, 1.0f, 1.0f, 6000.0f);
 
-	mWorldViewProjection = dWorld * dView * dProj;
+    mWorldViewProjection = dWorld * dView * dProj;
 
-	// VS Per object
-	V(pd3dImmediateContext->Map(g_pcbVSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
-	CB_VS_PER_OBJECT* pVSPerObject = (CB_VS_PER_OBJECT*)MappedResource.pData;
-	D3DXMatrixTranspose(&pVSPerObject->m_WorldViewProj, &mWorldViewProjection);
-	D3DXMatrixTranspose(&pVSPerObject->m_World, &mWorld);
-	pd3dImmediateContext->Unmap(g_pcbVSPerObject, 0);
-	pd3dImmediateContext->VSSetConstantBuffers(g_iCBVSPerObjectBind, 1, &g_pcbVSPerObject);
+    // VS Per object
+    V(pd3dImmediateContext->Map(g_pcbVSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+    CB_VS_PER_OBJECT* pVSPerObject = (CB_VS_PER_OBJECT*)MappedResource.pData;
+    D3DXMatrixTranspose(&pVSPerObject->m_WorldViewProj, &mWorldViewProjection);
+    D3DXMatrixTranspose(&pVSPerObject->m_World, &mWorld);
+    pd3dImmediateContext->Unmap(g_pcbVSPerObject, 0);
+    pd3dImmediateContext->VSSetConstantBuffers(g_iCBVSPerObjectBind, 1, &g_pcbVSPerObject);
 
-	// PS Per object
-	V(pd3dImmediateContext->Map(g_pcbPSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
-	CB_PS_PER_OBJECT* pPSPerObject = (CB_PS_PER_OBJECT*)MappedResource.pData;
-	pPSPerObject->m_vObjectColor = D3DXVECTOR4(1, 1, 1, 1);
-	pd3dImmediateContext->Unmap(g_pcbPSPerObject, 0);
-	pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerObjectBind, 1, &g_pcbPSPerObject);
+    // PS Per object
+    V(pd3dImmediateContext->Map(g_pcbPSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+    CB_PS_PER_OBJECT* pPSPerObject = (CB_PS_PER_OBJECT*)MappedResource.pData;
+    pPSPerObject->m_vObjectColor = D3DXVECTOR4(1, 1, 1, 1);
+    pd3dImmediateContext->Unmap(g_pcbPSPerObject, 0);
+    pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerObjectBind, 1, &g_pcbPSPerObject);
 
-	//Render
-	D3D11_PRIMITIVE_TOPOLOGY PrimType;
-	PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
-	pd3dImmediateContext->DrawIndexed(36, 0, 0);
+    //Render
+    D3D11_PRIMITIVE_TOPOLOGY PrimType;
+    PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
+    pd3dImmediateContext->DrawIndexed(36, 0, 0);
 
-	//将target复制出来
-	D3D11_TEXTURE2D_DESC copyDesc;
-	lightTex->GetDesc(&copyDesc);
-	copyDesc.BindFlags = 0;
-	copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-	copyDesc.Usage = D3D11_USAGE_STAGING;
-	copyDesc.BindFlags = 0;
-	copyDesc.MiscFlags = 0;
-	hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &lightTexCopy);
-	if (FAILED(hr))
-		return;
+    //将target复制出来
+    D3D11_TEXTURE2D_DESC copyDesc;
+    lightTex->GetDesc(&copyDesc);
+    copyDesc.BindFlags = 0;
+    copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+    copyDesc.Usage = D3D11_USAGE_STAGING;
+    copyDesc.BindFlags = 0;
+    copyDesc.MiscFlags = 0;
+    hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &lightTexCopy);
+    if (FAILED(hr))
+        return;
 
-	pd3dImmediateContext->CopyResource(lightTexCopy, lightTex);
-	D3D11_MAPPED_SUBRESOURCE frameResources;
-	ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	pd3dImmediateContext->Map(lightTexCopy, 0, D3D11_MAP_READ, 0, &frameResources);
-	XMFLOAT4 * ptr = (XMFLOAT4*)(frameResources.pData);
-	int count = 0;
+    pd3dImmediateContext->CopyResource(lightTexCopy, lightTex);
+    D3D11_MAPPED_SUBRESOURCE frameResources;
+    ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
+    pd3dImmediateContext->Map(lightTexCopy, 0, D3D11_MAP_READ, 0, &frameResources);
+    XMFLOAT4 * ptr = (XMFLOAT4*)(frameResources.pData);
+    int count = 0;
 
-	for (size_t i = 0; i < 512; i++)
-	{
-		for (size_t j = 0; j < 512; j++)
-		{
-			if (ptr[i * 512 + j].w > 0.5){
-				posLight[count][0] = ptr[i * 512 + j].x;
-				posLight[count][1] = ptr[i * 512 + j].y;
-				posLight[count][2] = ptr[i * 512 + j].z;
-				count++;
-			}
-		}
-	}
-	photonNumLight = count;
+    for (size_t i = 0; i < 512; i++)
+    {
+        for (size_t j = 0; j < 512; j++)
+        {
+            if (ptr[i * 512 + j].w > 0.5){
+                posLight[count][0] = ptr[i * 512 + j].x;
+                posLight[count][1] = ptr[i * 512 + j].y;
+                posLight[count][2] = ptr[i * 512 + j].z;
+                count++;
+            }
+        }
+    }
+    photonNumLight = count;
 
-	pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	pd3dImmediateContext->ClearRenderTargetView(lightTV, ClearColor);
-	pd3dImmediateContext->OMSetRenderTargets(1, &lightTV, pDSV);
+    pd3dImmediateContext->ClearRenderTargetView(lightTV, ClearColor);
+    pd3dImmediateContext->OMSetRenderTargets(1, &lightTV, pDSV);
 
-	pd3dImmediateContext->VSSetShader(photonVertexShader, NULL, 0);
-	pd3dImmediateContext->PSSetShader(photonPixelShaderDir, NULL, 0);
+    pd3dImmediateContext->VSSetShader(photonVertexShader, NULL, 0);
+    pd3dImmediateContext->PSSetShader(photonPixelShaderDir, NULL, 0);
 
 
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
-	D3DXMatrixScaling(&scale, meshScale, meshScale, meshScale);
+    D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
+    D3DXMatrixScaling(&scale, meshScale, meshScale, meshScale);
 
-	//Render
-	//D3D11_PRIMITIVE_TOPOLOGY PrimType;
-	PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
-	pd3dImmediateContext->DrawIndexed(36, 0, 0);
+    //Render
+    //D3D11_PRIMITIVE_TOPOLOGY PrimType;
+    PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
+    pd3dImmediateContext->DrawIndexed(36, 0, 0);
 
-	//将target复制出来
-	//D3D11_TEXTURE2D_DESC copyDesc;
-	lightTex->GetDesc(&copyDesc);
-	copyDesc.BindFlags = 0;
-	copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-	copyDesc.Usage = D3D11_USAGE_STAGING;
-	copyDesc.BindFlags = 0;
-	copyDesc.MiscFlags = 0;
-	hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &lightTexCopy);
-	if (FAILED(hr))
-		return;
+    //将target复制出来
+    //D3D11_TEXTURE2D_DESC copyDesc;
+    lightTex->GetDesc(&copyDesc);
+    copyDesc.BindFlags = 0;
+    copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+    copyDesc.Usage = D3D11_USAGE_STAGING;
+    copyDesc.BindFlags = 0;
+    copyDesc.MiscFlags = 0;
+    hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &lightTexCopy);
+    if (FAILED(hr))
+        return;
 
-	pd3dImmediateContext->CopyResource(lightTexCopy, lightTex);
-	//D3D11_MAPPED_SUBRESOURCE frameResources;
-	ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	pd3dImmediateContext->Map(lightTexCopy, 0, D3D11_MAP_READ, 0, &frameResources);
-	ptr = (XMFLOAT4*)(frameResources.pData);
-	count = 0;
+    pd3dImmediateContext->CopyResource(lightTexCopy, lightTex);
+    //D3D11_MAPPED_SUBRESOURCE frameResources;
+    ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
+    pd3dImmediateContext->Map(lightTexCopy, 0, D3D11_MAP_READ, 0, &frameResources);
+    ptr = (XMFLOAT4*)(frameResources.pData);
+    count = 0;
 
-	for (size_t i = 0; i < 512; i++)
-	{
-		for (size_t j = 0; j < 512; j++)
-		{
-			if (ptr[i * 512 + j].w > 0.5){
-				dirLight[count][0] = ptr[i * 512 + j].x;
-				dirLight[count][1] = ptr[i * 512 + j].y;
-				dirLight[count][2] = ptr[i * 512 + j].z;
-				float mul = dirLight[count][0] * dirLight[count][0] + dirLight[count][1] * dirLight[count][1] + dirLight[count][2] * dirLight[count][2];
-				mul = sqrt(mul);
-				dirLight[count][0] = ptr[i * 512 + j].x / mul;
-				dirLight[count][1] = ptr[i * 512 + j].y / mul;
-				dirLight[count][2] = ptr[i * 512 + j].z / mul;
-				count++;
-			}
+    for (size_t i = 0; i < 512; i++)
+    {
+        for (size_t j = 0; j < 512; j++)
+        {
+            if (ptr[i * 512 + j].w > 0.5){
+                dirLight[count][0] = ptr[i * 512 + j].x;
+                dirLight[count][1] = ptr[i * 512 + j].y;
+                dirLight[count][2] = ptr[i * 512 + j].z;
+                float mul = dirLight[count][0] * dirLight[count][0] + dirLight[count][1] * dirLight[count][1] + dirLight[count][2] * dirLight[count][2];
+                mul = sqrt(mul);
+                dirLight[count][0] = ptr[i * 512 + j].x / mul;
+                dirLight[count][1] = ptr[i * 512 + j].y / mul;
+                dirLight[count][2] = ptr[i * 512 + j].z / mul;
+                count++;
+            }
 
-		}
-	}
-	pd3dImmediateContext->OMSetRenderTargets(1, &pRTV, pDSV);
+        }
+    }
+    pd3dImmediateContext->OMSetRenderTargets(1, &pRTV, pDSV);
 
 }
 
@@ -1282,355 +1262,352 @@ ID3D11Buffer * viewVertexBuf = NULL;
 ID3D11Buffer * viewIndexBuf = NULL;
 
 ID3D11RenderTargetView*     viewTV;
-ID3D11Texture2D*			viewTex = NULL;
-ID3D11Texture2D*			viewTexCopy = NULL;
+ID3D11Texture2D*            viewTex = NULL;
+ID3D11Texture2D*            viewTexCopy = NULL;
 
 float posView[262144][3] = { 0 };
 float dirView[262144][3] = { 0 };
 
 void renderView(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext){
-	
-	HRESULT hr;
-	float dx = vecAtView.x - vecEyeView.x;
-	float dy = vecAtView.y - vecEyeView.y;
-	float dz = vecAtView.z - vecEyeView.z;
+    
+    HRESULT hr;
+    float dx = vecAtView.x - vecEyeView.x;
+    float dy = vecAtView.y - vecEyeView.y;
+    float dz = vecAtView.z - vecEyeView.z;
 
-	float muln = dx * dx + dy * dy + dz * dz;
-	muln = sqrt(muln);
+    float muln = dx * dx + dy * dy + dz * dz;
+    muln = sqrt(muln);
 
-	dx /= muln;
-	dy /= muln;
-	dz /= muln;
+    dx /= muln;
+    dy /= muln;
+    dz /= muln;
 
-	float centerX = vecEyeView.x + planeLen * dx;
-	float centerY = vecEyeView.y + planeLen * dy;
-	float centerZ = vecEyeView.z + planeLen * dz;
+    float centerX = vecEyeView.x + planeLen * dx;
+    float centerY = vecEyeView.y + planeLen * dy;
+    float centerZ = vecEyeView.z + planeLen * dz;
 
-	float a;
-	float b;
-	if (abs(dy - 0.0) < 0.00000001){
-		a = 0;
-		b = 1.0;
-	}
-	else
-	{
-		a = 1.0f;
-		b = -dx / dy;
-	}
+    float a;
+    float b;
+    if (abs(dy - 0.0) < 0.00000001){
+        a = 0;
+        b = 1.0;
+    }
+    else
+    {
+        a = 1.0f;
+        b = -dx / dy;
+    }
 
-	muln = a * a + b * b;
-	muln = sqrt(muln);
+    muln = a * a + b * b;
+    muln = sqrt(muln);
 
-	a /= muln;
-	b /= muln;
+    a /= muln;
+    b /= muln;
 
-	float u = -dz * b;
-	float v = dz * a;
-	float w = dx * b - dy * a;
+    float u = -dz * b;
+    float v = dz * a;
+    float w = dx * b - dy * a;
 
-	muln = u*u + v*v + w*w;
-	muln = sqrt(muln);
+    muln = u*u + v*v + w*w;
+    muln = sqrt(muln);
 
-	u /= muln;
-	v /= muln;
-	w /= muln;
+    u /= muln;
+    v /= muln;
+    w /= muln;
 
-	//========== ===========
-	Vertex viewVertices[] =
-	{
-		{ XMFLOAT3(x_min, y_min, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_min, y_max, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_max, y_max, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_max, y_min, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_min, y_min, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_min, y_max, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_max, y_max, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(x_max, y_min, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(centerX - a * planeLen * 0.4142 + u * planeLen * 0.4142, centerY - planeLen * 0.4142 * b + planeLen * 0.4142 * v, centerZ + planeLen * 0.4142 * w), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(centerX + a * planeLen * 0.4142 + u * planeLen * 0.4142, centerY + planeLen * 0.4142 * b + planeLen * 0.4142 * v, centerZ + planeLen * 0.4142 * w), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(centerX + a * planeLen * 0.4142 - u * planeLen * 0.4142, centerY + planeLen * 0.4142 * b - planeLen * 0.4142 * v, centerZ - planeLen * 0.4142 * w), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(centerX - a * planeLen * 0.4142 - u * planeLen * 0.4142, centerY - planeLen * 0.4142 * b - planeLen * 0.4142 * v, centerZ - planeLen * 0.4142 * w), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
+    //========== ===========
+    Vertex viewVertices[] =
+    {
+        { XMFLOAT3(x_min, y_min, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_min, y_max, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_max, y_max, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_max, y_min, z_min), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_min, y_min, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_min, y_max, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_max, y_max, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(x_max, y_min, z_max), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(centerX - a * planeLen * 0.4142 + u * planeLen * 0.4142, centerY - planeLen * 0.4142 * b + planeLen * 0.4142 * v, centerZ + planeLen * 0.4142 * w), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(centerX + a * planeLen * 0.4142 + u * planeLen * 0.4142, centerY + planeLen * 0.4142 * b + planeLen * 0.4142 * v, centerZ + planeLen * 0.4142 * w), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(centerX + a * planeLen * 0.4142 - u * planeLen * 0.4142, centerY + planeLen * 0.4142 * b - planeLen * 0.4142 * v, centerZ - planeLen * 0.4142 * w), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(centerX - a * planeLen * 0.4142 - u * planeLen * 0.4142, centerY - planeLen * 0.4142 * b - planeLen * 0.4142 * v, centerZ - planeLen * 0.4142 * w), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
 
-	};
+    };
 
-	D3D11_BUFFER_DESC vbdView;
-	vbdView.Usage = D3D11_USAGE_IMMUTABLE;
-	vbdView.ByteWidth = sizeof(Vertex) * 12;
-	vbdView.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbdView.CPUAccessFlags = 0;
-	vbdView.MiscFlags = 0;
-	vbdView.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA vinitDataView;
-	vinitDataView.pSysMem = viewVertices;
+    D3D11_BUFFER_DESC vbdView;
+    vbdView.Usage = D3D11_USAGE_IMMUTABLE;
+    vbdView.ByteWidth = sizeof(Vertex) * 12;
+    vbdView.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    vbdView.CPUAccessFlags = 0;
+    vbdView.MiscFlags = 0;
+    vbdView.StructureByteStride = 0;
+    D3D11_SUBRESOURCE_DATA vinitDataView;
+    vinitDataView.pSysMem = viewVertices;
 
-	hr = pd3dDevice->CreateBuffer(&vbdView, &vinitDataView, &viewVertexBuf);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    hr = pd3dDevice->CreateBuffer(&vbdView, &vinitDataView, &viewVertexBuf);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        //ErrorMessage(hr);
+        return;
+    }
 
-	UINT viewIndices[] = {
-		// the plane
-		8, 9, 11,
-		9, 10, 11,
+    UINT viewIndices[] = {
+        // the plane
+        8, 9, 11,
+        9, 10, 11,
 
-		// front face
-		0, 1, 2,
-		0, 2, 3,
+        // front face
+        0, 1, 2,
+        0, 2, 3,
 
-		// back face
-		4, 6, 5,
-		4, 7, 6,
+        // back face
+        4, 6, 5,
+        4, 7, 6,
 
-		// left face
-		4, 5, 1,
-		4, 1, 0,
+        // left face
+        4, 5, 1,
+        4, 1, 0,
 
-		// right face
-		3, 2, 6,
-		3, 6, 7,
+        // right face
+        3, 2, 6,
+        3, 6, 7,
 
-		// top face
-		1, 5, 6,
-		1, 6, 2,
+        // top face
+        1, 5, 6,
+        1, 6, 2,
 
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
+        // bottom face
+        4, 0, 3,
+        4, 3, 7
+    };
 
-	D3D11_BUFFER_DESC ibdView;
-	ibdView.Usage = D3D11_USAGE_IMMUTABLE;
-	ibdView.ByteWidth = sizeof(UINT) * 42;
-	ibdView.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibdView.CPUAccessFlags = 0;
-	ibdView.MiscFlags = 0;
-	ibdView.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA iinitDataView;
-	iinitDataView.pSysMem = viewIndices;
-	hr = pd3dDevice->CreateBuffer(&ibdView, &iinitDataView, &viewIndexBuf);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    D3D11_BUFFER_DESC ibdView;
+    ibdView.Usage = D3D11_USAGE_IMMUTABLE;
+    ibdView.ByteWidth = sizeof(UINT) * 42;
+    ibdView.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    ibdView.CPUAccessFlags = 0;
+    ibdView.MiscFlags = 0;
+    ibdView.StructureByteStride = 0;
+    D3D11_SUBRESOURCE_DATA iinitDataView;
+    iinitDataView.pSysMem = viewIndices;
+    hr = pd3dDevice->CreateBuffer(&ibdView, &iinitDataView, &viewIndexBuf);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        //ErrorMessage(hr);
+        return;
+    }
 
 
-	UINT Strides[1];
-	UINT Offsets[1];
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
+    UINT Strides[1];
+    UINT Offsets[1];
+    UINT stride = sizeof(Vertex);
+    UINT offset = 0;
 
-	//创建target对应texture的描述
-	D3D11_TEXTURE2D_DESC resTexDesc;
-	ZeroMemory(&resTexDesc, sizeof(resTexDesc));
-	IDXGISwapChain*	pSwapChain = DXUTGetDXGISwapChain();
-	ID3D11Texture2D *backBuffer(NULL);
-	pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-	backBuffer->GetDesc(&resTexDesc);
-	resTexDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	resTexDesc.BindFlags = 0;
-	//resTexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	//resTexDesc.Usage = D3D11_USAGE_STAGING;
-	resTexDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
-	backBuffer->Release();
-	//target对应的texture2D
-	hr = pd3dDevice->CreateTexture2D(&resTexDesc, NULL, &viewTex);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    //创建target对应texture的描述
+    D3D11_TEXTURE2D_DESC resTexDesc;
+    ZeroMemory(&resTexDesc, sizeof(resTexDesc));
+    IDXGISwapChain*    pSwapChain = DXUTGetDXGISwapChain();
+    ID3D11Texture2D *backBuffer(NULL);
+    pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+    backBuffer->GetDesc(&resTexDesc);
+    resTexDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    resTexDesc.BindFlags = 0;
+    //resTexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+    //resTexDesc.Usage = D3D11_USAGE_STAGING;
+    resTexDesc.BindFlags = D3D11_BIND_RENDER_TARGET;
+    backBuffer->Release();
+    //target对应的texture2D
+    hr = pd3dDevice->CreateTexture2D(&resTexDesc, NULL, &viewTex);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        //ErrorMessage(hr);
+        return;
+    }
 
-	//创建一个新的target描述
-	//new render target view
-	D3D11_RENDER_TARGET_VIEW_DESC resTVDesc;
-	ZeroMemory(&resTVDesc, sizeof(resTVDesc));
-	//g_pRenderTargetView[0]->GetDesc(&resTV);
-	ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
-	pRTV->GetDesc(&resTVDesc);
-	resTVDesc.Format = resTexDesc.Format;
-	resTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	resTVDesc.Texture2D.MipSlice = 0;
+    //创建一个新的target描述
+    //new render target view
+    D3D11_RENDER_TARGET_VIEW_DESC resTVDesc;
+    ZeroMemory(&resTVDesc, sizeof(resTVDesc));
+    //g_pRenderTargetView[0]->GetDesc(&resTV);
+    ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
+    pRTV->GetDesc(&resTVDesc);
+    resTVDesc.Format = resTexDesc.Format;
+    resTVDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+    resTVDesc.Texture2D.MipSlice = 0;
 
-	//创建 targetview
-	hr = pd3dDevice->CreateRenderTargetView(viewTex, &resTVDesc, &viewTV);
-	if (FAILED(hr)){
-		char tmpstr[128];
-		wsprintfA(tmpstr, "Error code : %lX", hr);
-		OutputDebugStringA(tmpstr);
-		//ErrorMessage(hr);
-		return;
-	}
+    //创建 targetview
+    hr = pd3dDevice->CreateRenderTargetView(viewTex, &resTVDesc, &viewTV);
+    if (FAILED(hr)){
+        char tmpstr[128];
+        wsprintfA(tmpstr, "Error code : %lX", hr);
+        OutputDebugStringA(tmpstr);
+        //ErrorMessage(hr);
+        return;
+    }
 
-	//clear
-	ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
-	pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	pd3dImmediateContext->ClearRenderTargetView(viewTV, ClearColor);
-	pd3dImmediateContext->OMSetRenderTargets(1, &viewTV, pDSV);
+    //clear
+    ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
+    pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    pd3dImmediateContext->ClearRenderTargetView(viewTV, ClearColor);
+    pd3dImmediateContext->OMSetRenderTargets(1, &viewTV, pDSV);
 
-	D3DXMATRIX mWorldViewProjection;
-	D3DXVECTOR3 vLightDir;
-	D3DXMATRIX mWorld;
-	D3DXMATRIX mView;
-	D3DXMATRIX mProj;
-	D3DXMATRIX mTmp;
+    D3DXMATRIX mWorldViewProjection;
+    D3DXVECTOR3 vLightDir;
+    D3DXMATRIX mWorld;
+    D3DXMATRIX mView;
+    D3DXMATRIX mProj;
+    D3DXMATRIX mTmp;
 
-	//更新常数buffer
-	// Per frame cb update
-	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	V(pd3dImmediateContext->Map(g_pcbPSPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
-	CB_PS_PER_FRAME* pPerFrame = (CB_PS_PER_FRAME*)MappedResource.pData;
-	float fAmbient = 0.1f;
-	pPerFrame->m_vLightDirAmbient = D3DXVECTOR4(vecEyeView.x, vecEyeView.y, vecEyeView.z, fAmbient);
-	pd3dImmediateContext->Unmap(g_pcbPSPerFrame, 0);
-	pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerFrameBind, 1, &g_pcbPSPerFrame);
+    //更新常数buffer
+    // Per frame cb update
+    D3D11_MAPPED_SUBRESOURCE MappedResource;
+    V(pd3dImmediateContext->Map(g_pcbPSPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+    CB_PS_PER_FRAME* pPerFrame = (CB_PS_PER_FRAME*)MappedResource.pData;
+    float fAmbient = 0.1f;
+    pPerFrame->m_vLightDirAmbient = D3DXVECTOR4(vecEyeView.x, vecEyeView.y, vecEyeView.z, fAmbient);
+    pd3dImmediateContext->Unmap(g_pcbPSPerFrame, 0);
+    pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerFrameBind, 1, &g_pcbPSPerFrame);
+    pd3dImmediateContext->IASetInputLayout(photonVertexLayout);
+    pd3dImmediateContext->IASetVertexBuffers(0, 1, &viewVertexBuf, &stride, &offset);
+    pd3dImmediateContext->IASetIndexBuffer(viewIndexBuf, DXGI_FORMAT_R32_UINT, 0);
+    pd3dImmediateContext->VSSetShader(photonVertexShader, NULL, 0);
+    pd3dImmediateContext->PSSetShader(photonPixelShaderPos, NULL, 0);
 
-	pd3dImmediateContext->IASetInputLayout(photonVertexLayout);
+    // Set the per object constant data
+    D3DXMATRIX m_orthoMatrix;
+    XMMatrixScaling(0.5f, 0.5f, 0.5f);
+    D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
+    D3DXMATRIX scale;
+    //D3DXMatrixScaling(&scale, 0.5f, 0.5f, 0.5f);
+    D3DXMatrixScaling(&scale, meshScale, meshScale, meshScale);
 
-	pd3dImmediateContext->IASetVertexBuffers(0, 1, &viewVertexBuf, &stride, &offset);
-	pd3dImmediateContext->IASetIndexBuffer(viewIndexBuf, DXGI_FORMAT_R32_UINT, 0);
+    D3DXMATRIX dView;
+    D3DXVECTOR3 dEye(vecEyeView.x, vecEyeView.y, vecEyeView.z);
+    D3DXVECTOR3 dAt(0.0f, 0.0f, 0.0f);
+    D3DXVECTOR3 dUp(0.0f, 0.0f, 1.0f);
+    D3DXMatrixLookAtLH(&dView, &dEye, &dAt, &dUp);
+    D3DXMATRIX dWorld;
+    D3DXMatrixIdentity(&dWorld);
+    D3DXMATRIX dProj;
+    D3DXMatrixPerspectiveFovLH(&dProj, D3DX_PI / 4, 1.0f, 1.0f, 6000.0f);
 
-	pd3dImmediateContext->VSSetShader(photonVertexShader, NULL, 0);
-	pd3dImmediateContext->PSSetShader(photonPixelShaderPos, NULL, 0);
+    mWorldViewProjection = dWorld * dView * dProj;
 
-	// Set the per object constant data
-	D3DXMATRIX m_orthoMatrix;
-	XMMatrixScaling(0.5f, 0.5f, 0.5f);
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
-	D3DXMATRIX scale;
-	//D3DXMatrixScaling(&scale, 0.5f, 0.5f, 0.5f);
-	D3DXMatrixScaling(&scale, meshScale, meshScale, meshScale);
+    // VS Per object
+    V(pd3dImmediateContext->Map(g_pcbVSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+    CB_VS_PER_OBJECT* pVSPerObject = (CB_VS_PER_OBJECT*)MappedResource.pData;
+    D3DXMatrixTranspose(&pVSPerObject->m_WorldViewProj, &mWorldViewProjection);
+    D3DXMatrixTranspose(&pVSPerObject->m_World, &mWorld);
+    pd3dImmediateContext->Unmap(g_pcbVSPerObject, 0);
+    pd3dImmediateContext->VSSetConstantBuffers(g_iCBVSPerObjectBind, 1, &g_pcbVSPerObject);
 
-	D3DXMATRIX dView;
-	D3DXVECTOR3 dEye(vecEyeView.x, vecEyeView.y, vecEyeView.z);
-	D3DXVECTOR3 dAt(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 dUp(0.0f, 0.0f, 1.0f);
-	D3DXMatrixLookAtLH(&dView, &dEye, &dAt, &dUp);
-	D3DXMATRIX dWorld;
-	D3DXMatrixIdentity(&dWorld);
-	D3DXMATRIX dProj;
-	D3DXMatrixPerspectiveFovLH(&dProj, D3DX_PI / 4, 1.0f, 1.0f, 6000.0f);
+    // PS Per object
+    V(pd3dImmediateContext->Map(g_pcbPSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+    CB_PS_PER_OBJECT* pPSPerObject = (CB_PS_PER_OBJECT*)MappedResource.pData;
+    pPSPerObject->m_vObjectColor = D3DXVECTOR4(1, 1, 1, 1);
+    pd3dImmediateContext->Unmap(g_pcbPSPerObject, 0);
+    pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerObjectBind, 1, &g_pcbPSPerObject);
 
-	mWorldViewProjection = dWorld * dView * dProj;
+    //Render
+    D3D11_PRIMITIVE_TOPOLOGY PrimType;
+    PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
+    pd3dImmediateContext->DrawIndexed(42, 0, 0);
 
-	// VS Per object
-	V(pd3dImmediateContext->Map(g_pcbVSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
-	CB_VS_PER_OBJECT* pVSPerObject = (CB_VS_PER_OBJECT*)MappedResource.pData;
-	D3DXMatrixTranspose(&pVSPerObject->m_WorldViewProj, &mWorldViewProjection);
-	D3DXMatrixTranspose(&pVSPerObject->m_World, &mWorld);
-	pd3dImmediateContext->Unmap(g_pcbVSPerObject, 0);
-	pd3dImmediateContext->VSSetConstantBuffers(g_iCBVSPerObjectBind, 1, &g_pcbVSPerObject);
+    //将target复制出来
+    D3D11_TEXTURE2D_DESC copyDesc;
+    viewTex->GetDesc(&copyDesc);
+    copyDesc.BindFlags = 0;
+    copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+    copyDesc.Usage = D3D11_USAGE_STAGING;
+    copyDesc.BindFlags = 0;
+    copyDesc.MiscFlags = 0;
+    hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &viewTexCopy);
+    if (FAILED(hr))
+        return;
 
-	// PS Per object
-	V(pd3dImmediateContext->Map(g_pcbPSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
-	CB_PS_PER_OBJECT* pPSPerObject = (CB_PS_PER_OBJECT*)MappedResource.pData;
-	pPSPerObject->m_vObjectColor = D3DXVECTOR4(1, 1, 1, 1);
-	pd3dImmediateContext->Unmap(g_pcbPSPerObject, 0);
-	pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerObjectBind, 1, &g_pcbPSPerObject);
+    pd3dImmediateContext->CopyResource(viewTexCopy, viewTex);
+    D3DX11SaveTextureToFile(pd3dImmediateContext, viewTexCopy, D3DX11_IFF_BMP, L"newview.bmp");
+    D3D11_MAPPED_SUBRESOURCE frameResources;
+    ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
+    pd3dImmediateContext->Map(viewTexCopy, 0, D3D11_MAP_READ, 0, &frameResources);
+    XMFLOAT4 * ptr = (XMFLOAT4*)(frameResources.pData);
+    int count = 0;
 
-	//Render
-	D3D11_PRIMITIVE_TOPOLOGY PrimType;
-	PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
-	pd3dImmediateContext->DrawIndexed(42, 0, 0);
+    for (size_t i = 0; i < 512; i++)
+    {
+        for (size_t j = 0; j < 512; j++)
+        {
+            if (ptr[i * 512 + j].w > 0.5){
+                posView[count][0] = ptr[i * 512 + j].x;
+                posView[count][1] = ptr[i * 512 + j].y;
+                posView[count][2] = ptr[i * 512 + j].z;
+                count++;
+            }
+        }
+    }
 
-	//将target复制出来
-	D3D11_TEXTURE2D_DESC copyDesc;
-	viewTex->GetDesc(&copyDesc);
-	copyDesc.BindFlags = 0;
-	copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-	copyDesc.Usage = D3D11_USAGE_STAGING;
-	copyDesc.BindFlags = 0;
-	copyDesc.MiscFlags = 0;
-	hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &viewTexCopy);
-	if (FAILED(hr))
-		return;
+    pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	pd3dImmediateContext->CopyResource(viewTexCopy, viewTex);
-	D3DX11SaveTextureToFile(pd3dImmediateContext, viewTexCopy, D3DX11_IFF_BMP, L"newview.bmp");
-	D3D11_MAPPED_SUBRESOURCE frameResources;
-	ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	pd3dImmediateContext->Map(viewTexCopy, 0, D3D11_MAP_READ, 0, &frameResources);
-	XMFLOAT4 * ptr = (XMFLOAT4*)(frameResources.pData);
-	int count = 0;
+    pd3dImmediateContext->ClearRenderTargetView(viewTV, ClearColor);
+    pd3dImmediateContext->OMSetRenderTargets(1, &viewTV, pDSV);
 
-	for (size_t i = 0; i < 512; i++)
-	{
-		for (size_t j = 0; j < 512; j++)
-		{
-			if (ptr[i * 512 + j].w > 0.5){
-				posView[count][0] = ptr[i * 512 + j].x;
-				posView[count][1] = ptr[i * 512 + j].y;
-				posView[count][2] = ptr[i * 512 + j].z;
-				count++;
-			}
-		}
-	}
+    pd3dImmediateContext->VSSetShader(photonVertexShader, NULL, 0);
+    pd3dImmediateContext->PSSetShader(photonPixelShaderDir, NULL, 0);
 
-	pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
+    D3DXMatrixScaling(&scale, meshScale, meshScale, meshScale);
 
-	pd3dImmediateContext->ClearRenderTargetView(viewTV, ClearColor);
-	pd3dImmediateContext->OMSetRenderTargets(1, &viewTV, pDSV);
+    //Render
+    //D3D11_PRIMITIVE_TOPOLOGY PrimType;
+    PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
+    pd3dImmediateContext->DrawIndexed(42, 0, 0);
 
-	pd3dImmediateContext->VSSetShader(photonVertexShader, NULL, 0);
-	pd3dImmediateContext->PSSetShader(photonPixelShaderDir, NULL, 0);
+    //将target复制出来
+    //D3D11_TEXTURE2D_DESC copyDesc;
+    viewTex->GetDesc(&copyDesc);
+    copyDesc.BindFlags = 0;
+    copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+    copyDesc.Usage = D3D11_USAGE_STAGING;
+    copyDesc.BindFlags = 0;
+    copyDesc.MiscFlags = 0;
+    hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &viewTexCopy);
+    if (FAILED(hr))
+        return;
 
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
-	D3DXMatrixScaling(&scale, meshScale, meshScale, meshScale);
+    pd3dImmediateContext->CopyResource(viewTexCopy, viewTex);
+    //D3D11_MAPPED_SUBRESOURCE frameResources;
+    ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
+    pd3dImmediateContext->Map(viewTexCopy, 0, D3D11_MAP_READ, 0, &frameResources);
+    ptr = (XMFLOAT4*)(frameResources.pData);
+    count = 0;
 
-	//Render
-	//D3D11_PRIMITIVE_TOPOLOGY PrimType;
-	PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
-	pd3dImmediateContext->DrawIndexed(42, 0, 0);
+    for (size_t i = 0; i < 512; i++)
+    {
+        for (size_t j = 0; j < 512; j++)
+        {
+            if (ptr[i * 512 + j].w > 0.5){
+                dirView[count][0] = ptr[i * 512 + j].x;
+                dirView[count][1] = ptr[i * 512 + j].y;
+                dirView[count][2] = ptr[i * 512 + j].z;
+                float mul = dirView[count][0] * dirView[count][0] + dirView[count][1] * dirView[count][1] + dirView[count][2] * dirView[count][2];
+                mul = sqrt(mul);
+                dirView[count][0] = ptr[i * 512 + j].x / mul;
+                dirView[count][1] = ptr[i * 512 + j].y / mul;
+                dirView[count][2] = ptr[i * 512 + j].z / mul;
+                count++;
+            }
 
-	//将target复制出来
-	//D3D11_TEXTURE2D_DESC copyDesc;
-	viewTex->GetDesc(&copyDesc);
-	copyDesc.BindFlags = 0;
-	copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-	copyDesc.Usage = D3D11_USAGE_STAGING;
-	copyDesc.BindFlags = 0;
-	copyDesc.MiscFlags = 0;
-	hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &viewTexCopy);
-	if (FAILED(hr))
-		return;
-
-	pd3dImmediateContext->CopyResource(viewTexCopy, viewTex);
-	//D3D11_MAPPED_SUBRESOURCE frameResources;
-	ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	pd3dImmediateContext->Map(viewTexCopy, 0, D3D11_MAP_READ, 0, &frameResources);
-	ptr = (XMFLOAT4*)(frameResources.pData);
-	count = 0;
-
-	for (size_t i = 0; i < 512; i++)
-	{
-		for (size_t j = 0; j < 512; j++)
-		{
-			if (ptr[i * 512 + j].w > 0.5){
-				dirView[count][0] = ptr[i * 512 + j].x;
-				dirView[count][1] = ptr[i * 512 + j].y;
-				dirView[count][2] = ptr[i * 512 + j].z;
-				float mul = dirView[count][0] * dirView[count][0] + dirView[count][1] * dirView[count][1] + dirView[count][2] * dirView[count][2];
-				mul = sqrt(mul);
-				dirView[count][0] = ptr[i * 512 + j].x / mul;
-				dirView[count][1] = ptr[i * 512 + j].y / mul;
-				dirView[count][2] = ptr[i * 512 + j].z / mul;
-				count++;
-			}
-
-		}
-	}
-	pd3dImmediateContext->OMSetRenderTargets(1, &pRTV, pDSV);
+        }
+    }
+    pd3dImmediateContext->OMSetRenderTargets(1, &pRTV, pDSV);
 
 }
 
@@ -1638,24 +1615,24 @@ unsigned char *ocTree;
 unsigned char *nTree;
 int buildTreeFlag = 1;
 void buildTree(){
-	if (!buildTreeFlag) return;
-	int exp = 7;
-	int len = 1 << exp;
-	FILE *stream;
-	if ((stream = fopen("voxel.data", "rb")) == NULL) /* open file TEST.$$$ */
-	{
-		fprintf(stderr, "Cannot open output file.\n");
-		return;
-	}
-	nTree = (unsigned char *)malloc(len*len*len * 2 * sizeof(unsigned char));
-	if (!nTree){
-		fprintf(stderr, "CPU memory Malloc failed!");
-		return;
-	}
-	fread(nTree, len * len *len * 2 * sizeof(unsigned char), 1, stream);
-	fclose(stream);
-	int a = constructOctree((unsigned char *)nTree, exp, &ocTree, 0.090);
-	buildTreeFlag = 0;
+    if (!buildTreeFlag) return;
+    int exp = 7;
+    int len = 1 << exp;
+    FILE *stream;
+    if ((stream = fopen("voxel.data", "rb")) == NULL) /* open file TEST.$$$ */
+    {
+        fprintf(stderr, "Cannot open output file.\n");
+        return;
+    }
+    nTree = (unsigned char *)malloc(len*len*len * 2 * sizeof(unsigned char));
+    if (!nTree){
+        fprintf(stderr, "CPU memory Malloc failed!");
+        return;
+    }
+    fread(nTree, len * len *len * 2 * sizeof(unsigned char), 1, stream);
+    fclose(stream);
+    int a = constructOctree((unsigned char *)nTree, exp, &ocTree, 0.090);
+    buildTreeFlag = 0;
 }
 
 //--------------------------------------------------------------------------------------
@@ -1673,387 +1650,387 @@ D3DXVECTOR3 p4;
 float planeLenBack = 900.0;
 extern float TableZ;
 void cal4Points(){
-	float dx = vecAtView.x - vecEyeView.x;
-	float dy = vecAtView.y - vecEyeView.y;
-	float dz = vecAtView.z - vecEyeView.z;
+    float dx = vecAtView.x - vecEyeView.x;
+    float dy = vecAtView.y - vecEyeView.y;
+    float dz = vecAtView.z - vecEyeView.z;
 
-	float muln = dx * dx + dy * dy + dz * dz;
-	muln = sqrt(muln);
+    float muln = dx * dx + dy * dy + dz * dz;
+    muln = sqrt(muln);
 
-	dx /= muln;
-	dy /= muln;
-	dz /= muln;
+    dx /= muln;
+    dy /= muln;
+    dz /= muln;
 
-	float centerX = vecEyeView.x + planeLenBack * dx;
-	float centerY = vecEyeView.y + planeLenBack * dy;
-	float centerZ = vecEyeView.z + planeLenBack * dz;
+    float centerX = vecEyeView.x + planeLenBack * dx;
+    float centerY = vecEyeView.y + planeLenBack * dy;
+    float centerZ = vecEyeView.z + planeLenBack * dz;
 
-	float a;
-	float b;
-	if (abs(dy - 0.0) < 0.00000001){
-		a = 0;
-		b = 1.0;
-	}
-	else
-	{
-		a = 1.0f;
-		b = -dx / dy;
-	}
+    float a;
+    float b;
+    if (abs(dy - 0.0) < 0.00000001){
+        a = 0;
+        b = 1.0;
+    }
+    else
+    {
+        a = 1.0f;
+        b = -dx / dy;
+    }
 
-	muln = a * a + b * b;
-	muln = sqrt(muln);
+    muln = a * a + b * b;
+    muln = sqrt(muln);
 
-	a /= muln;
-	b /= muln;
+    a /= muln;
+    b /= muln;
 
-	float u = -dz * b;
-	float v = dz * a;
-	float w = dx * b - dy * a;
+    float u = -dz * b;
+    float v = dz * a;
+    float w = dx * b - dy * a;
 
-	muln = u*u + v*v + w*w;
-	muln = sqrt(muln);
+    muln = u*u + v*v + w*w;
+    muln = sqrt(muln);
 
-	u /= muln;
-	v /= muln;
-	w /= muln;
+    u /= muln;
+    v /= muln;
+    w /= muln;
 
-	p1.x = centerX - a * planeLenBack * 0.4142 - u * planeLenBack * 0.4142;
-	p1.y = centerY - b * planeLenBack * 0.4142 - v * planeLenBack * 0.4142;
-	p1.z = centerZ - w * planeLenBack * 0.4142;
+    p1.x = centerX - a * planeLenBack * 0.4142 - u * planeLenBack * 0.4142;
+    p1.y = centerY - b * planeLenBack * 0.4142 - v * planeLenBack * 0.4142;
+    p1.z = centerZ - w * planeLenBack * 0.4142;
 
-	p2.x = centerX + a * planeLenBack * 0.4142 - u * planeLenBack * 0.4142;
-	p2.y = centerY + b * planeLenBack * 0.4142 - v * planeLenBack * 0.4142;
-	p2.z = centerZ - w * planeLenBack * 0.4142;
+    p2.x = centerX + a * planeLenBack * 0.4142 - u * planeLenBack * 0.4142;
+    p2.y = centerY + b * planeLenBack * 0.4142 - v * planeLenBack * 0.4142;
+    p2.z = centerZ - w * planeLenBack * 0.4142;
 
-	p3.x = centerX + a * planeLenBack * 0.4142 + u * planeLenBack * 0.4142;
-	p3.y = centerY + b * planeLenBack * 0.4142 + v * planeLenBack * 0.4142;
-	p3.z = centerZ + w * planeLenBack * 0.4142;
+    p3.x = centerX + a * planeLenBack * 0.4142 + u * planeLenBack * 0.4142;
+    p3.y = centerY + b * planeLenBack * 0.4142 + v * planeLenBack * 0.4142;
+    p3.z = centerZ + w * planeLenBack * 0.4142;
 
-	p4.x = centerX - a * planeLenBack * 0.4142 + u * planeLenBack * 0.4142;
-	p4.y = centerY - b * planeLenBack * 0.4142 + v * planeLenBack * 0.4142;
-	p4.z = centerZ + w * planeLenBack * 0.4142;
+    p4.x = centerX - a * planeLenBack * 0.4142 + u * planeLenBack * 0.4142;
+    p4.y = centerY - b * planeLenBack * 0.4142 + v * planeLenBack * 0.4142;
+    p4.z = centerZ + w * planeLenBack * 0.4142;
 }
 
 void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime,
                                   float fElapsedTime, void* pUserContext )
 {
-	planeLen = 780;
-	planeLenBack = 800;
+    planeLen = 780;
+    planeLenBack = 800;
 
-	if (!bRenderLight){
-		vecEyeLight.x = -0.0f;
-		vecEyeLight.y = -100.0f;
-		vecEyeLight.z = 600.0f;
-		renderLight(pd3dDevice, pd3dImmediateContext);
-		bRenderLight = true;
-	}
-	if (!bRenderView){
-		//vecAtView.x = 0.0f;
-		//vecAtView.y = 0.0f;
-		//vecAtView.z = 0.0f;
-		//vecEyeView.x = -100.0f;
-		//vecEyeView.y = 400.0f;
-		//vecEyeView.z = -100.0f;
-		renderView(pd3dDevice, pd3dImmediateContext);
-		renderToBackTexture(pd3dDevice, pd3dImmediateContext);
-		bRenderView = true;
-	}
-	if (!toBackTextureDown)
-	{
+    if (!bRenderLight){
+        vecEyeLight.x = -0.0f;
+        vecEyeLight.y = -100.0f;
+        vecEyeLight.z = 600.0f;
+        renderLight(pd3dDevice, pd3dImmediateContext);
+        bRenderLight = true;
+    }
+    if (!bRenderView){
+        //vecAtView.x = 0.0f;
+        //vecAtView.y = 0.0f;
+        //vecAtView.z = 0.0f;
+        //vecEyeView.x = -100.0f;
+        //vecEyeView.y = 400.0f;
+        //vecEyeView.z = -100.0f;
+        renderView(pd3dDevice, pd3dImmediateContext);
+        renderToBackTexture(pd3dDevice, pd3dImmediateContext);
+        bRenderView = true;
+    }
+    if (!toBackTextureDown)
+    {
 
-		//renderToBackTexture(pd3dDevice, pd3dImmediateContext);
-		toBackTextureDown = true;
-	}
+        //renderToBackTexture(pd3dDevice, pd3dImmediateContext);
+        toBackTextureDown = true;
+    }
 
-	//-------------------------------------
-	IDXGISwapChain* pSwapChain = DXUTGetDXGISwapChain();
-	ID3D11Texture2D *backBuffer(NULL);
-	pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-	D3D11_TEXTURE2D_DESC texDesc;
-	backBuffer->GetDesc(&texDesc);
-	texDesc.BindFlags = 0;
-	texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-	texDesc.Usage = D3D11_USAGE_STAGING;
-	texDesc.BindFlags = 0;
-	texDesc.MiscFlags = 0;
-	backBuffer->Release();
+    //-------------------------------------
+    IDXGISwapChain* pSwapChain = DXUTGetDXGISwapChain();
+    ID3D11Texture2D *backBuffer(NULL);
+    pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
+    D3D11_TEXTURE2D_DESC texDesc;
+    backBuffer->GetDesc(&texDesc);
+    texDesc.BindFlags = 0;
+    texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+    texDesc.Usage = D3D11_USAGE_STAGING;
+    texDesc.BindFlags = 0;
+    texDesc.MiscFlags = 0;
+    backBuffer->Release();
 
-	texDesc.Width = 512;
-	texDesc.Height = 512;
-	HRESULT hr = pd3dDevice->CreateTexture2D(&texDesc, NULL, &tmp);
-	D3D11_MAPPED_SUBRESOURCE frameResources;
-	ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	pd3dImmediateContext->Map(tmp, 0, D3D11_MAP_WRITE, 0, &frameResources);
-	color *Frame = (color*)(frameResources.pData);
+    texDesc.Width = 512;
+    texDesc.Height = 512;
+    HRESULT hr = pd3dDevice->CreateTexture2D(&texDesc, NULL, &tmp);
+    D3D11_MAPPED_SUBRESOURCE frameResources;
+    ZeroMemory(&frameResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
+    pd3dImmediateContext->Map(tmp, 0, D3D11_MAP_WRITE, 0, &frameResources);
+    color *Frame = (color*)(frameResources.pData);
 
-	TableZ = -200;
-	//------------------------------------	
-	int exp = 7;
-	int len = 1 << exp;
-	buildTree();
-	//----------------
-	int numPhoton = photonNumLight-10;
-	float *table_d = 0;
-	float *photondir=0, *photonrad=0, *photonpos=0;
-	int *offset, *tableOffset, *flag;
-	int TableR = 160;
-	if (!marchBool)
-	{
-		direction = (float *)malloc(3 * len*len*len*sizeof(float));
-		radiance = (float *)malloc(3 * len*len*len*sizeof(float));
-		memset(direction, 0, 3 * len*len*len*sizeof(float));
-		memset(radiance, 0, 3 * len*len*len*sizeof(float));
-		photondir = (float *)&dirLight;
-		photonpos = (float *)&posLight;
-		photonrad = (float *)malloc(numPhoton * 3 * sizeof(float));
-		for (int i = 0; i < numPhoton; i++)
-		{
-			photonrad[i * 3] = 0.001;
-			photonrad[i * 3 + 1] = 0.001;
-			photonrad[i * 3 + 2] = 0.001;
-		}		
-		marchPhoton(ocTree, nTree, direction, radiance, photondir, photonrad, photonpos, 7, numPhoton, 3.125, &table_d, 1024, TableR*2*1.0/1000, N);
-		if (table) free(table);
-		gaussian2D(table_d, &table, 1024, 13, 13.0 / 6, 5);
-		marchBool = true;
-	}	
-	float *seephotondir = 0, *seephotonrad = 0, *seephotonpos = 0;
-	seephotondir = (float *)&dirView;
-	seephotonpos = (float *)&posView;
-	seephotonrad = (float *)malloc(512 * 512 * 3 * sizeof(float));
-	memset(seephotonrad, 0, 512 * 512 * 3 * sizeof(float));
-	cal4Points();
-	collectPhoton(ocTree, nTree, direction, radiance, seephotondir, seephotonrad, seephotonpos, 7, 512 * 512, 3.125,
-		&offset, &tableOffset, &flag, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, p3.x, p3.y, p3.z, p4.x, p4.y, p4.z, N);
-	float *prephotonrad_d;
-	mapSeq(seephotonrad, &prephotonrad_d, sizeof(float), 512 * 512 * 3 );
-	if (seephotonrad) free(seephotonrad);
-	gaussian2D(prephotonrad_d, &seephotonrad, 512, 13, 13.0 / 6, 1);
-	//-------------------------
-	D3D11_MAPPED_SUBRESOURCE backResources;
-	ZeroMemory(&backResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	pd3dImmediateContext->Map(resTexBackCopy, 0, D3D11_MAP_READ, 0, &backResources);
-	color *ptcBack = (color*)(backResources.pData);
-	D3DX11SaveTextureToFile(pd3dImmediateContext, resTexBackCopy, D3DX11_IFF_BMP, L"seeBack.bmp");
+    TableZ = -200;
+    //------------------------------------    
+    int exp = 7;
+    int len = 1 << exp;
+    buildTree();
+    //----------------
+    int numPhoton = photonNumLight-10;
+    float *table_d = 0;
+    float *photondir=0, *photonrad=0, *photonpos=0;
+    int *offset, *tableOffset, *flag;
+    int TableR = 160;
+    if (!marchBool)
+    {
+        direction = (float *)malloc(3 * len*len*len*sizeof(float));
+        radiance = (float *)malloc(3 * len*len*len*sizeof(float));
+        memset(direction, 0, 3 * len*len*len*sizeof(float));
+        memset(radiance, 0, 3 * len*len*len*sizeof(float));
+        photondir = (float *)&dirLight;
+        photonpos = (float *)&posLight;
+        photonrad = (float *)malloc(numPhoton * 3 * sizeof(float));
+        for (int i = 0; i < numPhoton; i++)
+        {
+            photonrad[i * 3] = 0.001;
+            photonrad[i * 3 + 1] = 0.001;
+            photonrad[i * 3 + 2] = 0.001;
+        }        
+        marchPhoton(ocTree, nTree, direction, radiance, photondir, photonrad, photonpos, 7, numPhoton, 3.125, &table_d, 1024, TableR*2*1.0/1000, N);
+        if (table) free(table);
+        gaussian2D(table_d, &table, 1024, 13, 13.0 / 6, 5);
+        marchBool = true;
+    }    
+    float *seephotondir = 0, *seephotonrad = 0, *seephotonpos = 0;
+    seephotondir = (float *)&dirView;
+    seephotonpos = (float *)&posView;
+    seephotonrad = (float *)malloc(512 * 512 * 3 * sizeof(float));
+    memset(seephotonrad, 0, 512 * 512 * 3 * sizeof(float));
+    cal4Points();
+    collectPhoton(ocTree, nTree, direction, radiance, seephotondir, seephotonrad, seephotonpos, 7, 512 * 512, 3.125,
+        &offset, &tableOffset, &flag, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, p3.x, p3.y, p3.z, p4.x, p4.y, p4.z, N);
+    float *prephotonrad_d;
+    mapSeq(seephotonrad, &prephotonrad_d, sizeof(float), 512 * 512 * 3 );
+    if (seephotonrad) free(seephotonrad);
+    gaussian2D(prephotonrad_d, &seephotonrad, 512, 13, 13.0 / 6, 1);
+    //-------------------------
+    D3D11_MAPPED_SUBRESOURCE backResources;
+    ZeroMemory(&backResources, sizeof(D3D11_MAPPED_SUBRESOURCE));
+    pd3dImmediateContext->Map(resTexBackCopy, 0, D3D11_MAP_READ, 0, &backResources);
+    color *ptcBack = (color*)(backResources.pData);
+    D3DX11SaveTextureToFile(pd3dImmediateContext, resTexBackCopy, D3DX11_IFF_BMP, L"seeBack.bmp");
 
-	int tmpR = 0;
-	int tmpG = 0;
-	int tmpB = 0;
-	float *rad = seephotonrad;
-	for (int j = 0; j < 512; j++){
-		for (int k = 0; k < 512; k++){
-			float scale =radScale;
-			int tmpR = 0;
-			int tmpG = 0;
-			int tmpB = 0;
-			if (flag[j * 512 + k] == 5)
-				tmpR = tmpR;
-			if (flag[j * 512 + k] == 1)
-			{
-				tmpR = (unsigned char)(rad[j * 512 * 3 + k * 3 + 0] * scale * 255) + (unsigned char)(ptcBack[offset[j * 512 + k]].r);
-				tmpG = (unsigned char)(rad[j * 512 * 3 + k * 3 + 1] * scale * 255) + (unsigned char)(ptcBack[offset[j * 512 + k]].g);
-				tmpB = (unsigned char)(rad[j * 512 * 3 + k * 3 + 2] * scale * 255) + (unsigned char)(ptcBack[offset[j * 512 + k]].b);
-			}
-			else if (flag[j * 512 + k] == 2)
-			{				
-				int tmp = tableOffset[j * 512 + k];
-				int tx = tmp % (TableR*2);
-				int ty = tmp / (TableR * 2);
-				if (((tx / ((TableR * 2 / 8))) % 2) == ((ty / ((TableR * 2 / 8)) % 2)))
-				{
-					tmpR = 165;
-					tmpG = 73;
-					tmpB = 40;
-				}
-				else
-				{
-					tmpR = 176;
-					tmpG = 147;
-					tmpB = 114;
-				}				
-				int tablex = int(tx * (1024.0 / (TableR * 2)));
-				int tabley = int(ty * (1024.0 / (TableR * 2)));
-				float tableSC = 60;
-				tmpR = tmpR + (unsigned int)(table[(tablex + tabley * 1024) * 3] * tableSC * 255);
-				tmpG = tmpG + (unsigned int)(table[(tablex + tabley * 1024) * 3 + 1] * tableSC * 255);
-				tmpB = tmpB + (unsigned int)(table[(tablex + tabley * 1024) * 3 + 2] * tableSC * 255);
-				float sum = table[(tablex + tabley * 1024) * 3] + table[(tablex + tabley * 1024) * 3 + 1] + table[(tablex + tabley * 1024) * 3 + 2];
-				if (bRenderShadow)
-					if (sum< 0.0001)
-					{
-						tmpR *= (0.1 + sum / 0.001 * 0.9);
-						tmpG *= (0.1 + sum / 0.001 * 0.9);
-						tmpB *= (0.1 + sum / 0.001 * 0.9);
-					}
-				if (tmpR > 255)	tmpR = 255;
-				if (tmpG > 255)	tmpG = 255;
-				if (tmpB > 255)	tmpB = 255;
-				tmpR += +(unsigned int)(rad[j * 512 * 3 + k * 3 + 0] * scale *5* 255);
-				tmpG += +(unsigned int)(rad[j * 512 * 3 + k * 3 + 1] * scale *5* 255);
-				tmpB += +(unsigned int)(rad[j * 512 * 3 + k * 3 + 2] * scale *5* 255);
+    int tmpR = 0;
+    int tmpG = 0;
+    int tmpB = 0;
+    float *rad = seephotonrad;
+    for (int j = 0; j < 512; j++){
+        for (int k = 0; k < 512; k++){
+            float scale =radScale;
+            int tmpR = 0;
+            int tmpG = 0;
+            int tmpB = 0;
+            if (flag[j * 512 + k] == 5)
+                tmpR = tmpR;
+            if (flag[j * 512 + k] == 1)
+            {
+                tmpR = (unsigned char)(rad[j * 512 * 3 + k * 3 + 0] * scale * 255) + (unsigned char)(ptcBack[offset[j * 512 + k]].r);
+                tmpG = (unsigned char)(rad[j * 512 * 3 + k * 3 + 1] * scale * 255) + (unsigned char)(ptcBack[offset[j * 512 + k]].g);
+                tmpB = (unsigned char)(rad[j * 512 * 3 + k * 3 + 2] * scale * 255) + (unsigned char)(ptcBack[offset[j * 512 + k]].b);
+            }
+            else if (flag[j * 512 + k] == 2)
+            {                
+                int tmp = tableOffset[j * 512 + k];
+                int tx = tmp % (TableR*2);
+                int ty = tmp / (TableR * 2);
+                if (((tx / ((TableR * 2 / 8))) % 2) == ((ty / ((TableR * 2 / 8)) % 2)))
+                {
+                    tmpR = 165;
+                    tmpG = 73;
+                    tmpB = 40;
+                }
+                else
+                {
+                    tmpR = 176;
+                    tmpG = 147;
+                    tmpB = 114;
+                }                
+                int tablex = int(tx * (1024.0 / (TableR * 2)));
+                int tabley = int(ty * (1024.0 / (TableR * 2)));
+                float tableSC = 60;
+                tmpR = tmpR + (unsigned int)(table[(tablex + tabley * 1024) * 3] * tableSC * 255);
+                tmpG = tmpG + (unsigned int)(table[(tablex + tabley * 1024) * 3 + 1] * tableSC * 255);
+                tmpB = tmpB + (unsigned int)(table[(tablex + tabley * 1024) * 3 + 2] * tableSC * 255);
+                float sum = table[(tablex + tabley * 1024) * 3] + table[(tablex + tabley * 1024) * 3 + 1] + table[(tablex + tabley * 1024) * 3 + 2];
+                if (bRenderShadow)
+                    if (sum< 0.0001)
+                    {
+                        tmpR *= (0.1 + sum / 0.001 * 0.9);
+                        tmpG *= (0.1 + sum / 0.001 * 0.9);
+                        tmpB *= (0.1 + sum / 0.001 * 0.9);
+                    }
+                if (tmpR > 255)    tmpR = 255;
+                if (tmpG > 255)    tmpG = 255;
+                if (tmpB > 255)    tmpB = 255;
+                tmpR += +(unsigned int)(rad[j * 512 * 3 + k * 3 + 0] * scale *5* 255);
+                tmpG += +(unsigned int)(rad[j * 512 * 3 + k * 3 + 1] * scale *5* 255);
+                tmpB += +(unsigned int)(rad[j * 512 * 3 + k * 3 + 2] * scale *5* 255);
 
-			}
-			else
-			{
-				tmpR = (unsigned char)(rad[j * 512 * 3 + k * 3 + 0] * scale * 255);
-				tmpG = (unsigned char)(rad[j * 512 * 3 + k * 3 + 1] * scale * 255);
-				tmpB = (unsigned char)(rad[j * 512 * 3 + k * 3 + 2] * scale * 255);
-			}
-			scale = 20;
-			if (pureRad)
-			{
-				tmpR = (rad[j * 512 * 3 + k * 3 + 0] * scale * 255);
-				tmpG =(rad[j * 512 * 3 + k * 3 + 1] * scale * 255);
-				tmpB = (rad[j * 512 * 3 + k * 3 + 2] * scale * 255);
-			}
+            }
+            else
+            {
+                tmpR = (unsigned char)(rad[j * 512 * 3 + k * 3 + 0] * scale * 255);
+                tmpG = (unsigned char)(rad[j * 512 * 3 + k * 3 + 1] * scale * 255);
+                tmpB = (unsigned char)(rad[j * 512 * 3 + k * 3 + 2] * scale * 255);
+            }
+            scale = 20;
+            if (pureRad)
+            {
+                tmpR = (rad[j * 512 * 3 + k * 3 + 0] * scale * 255);
+                tmpG =(rad[j * 512 * 3 + k * 3 + 1] * scale * 255);
+                tmpB = (rad[j * 512 * 3 + k * 3 + 2] * scale * 255);
+            }
 
-			if (tmpR > 255)
-				tmpR = 255;
-			if (tmpG > 255)
-				tmpG = 255;
-			if (tmpB > 255)
-				tmpB = 255;
-			Frame[j * 512  +k].r= (unsigned char)tmpR;
-			Frame[j * 512 + k].g = (unsigned char)tmpG;
-			Frame[j * 512 + k].b = (unsigned char)tmpB;
-		/*	if (false)if (offset[j * 512 + k] < 0){
-				ptc[j * 512 * 4 + k * 4 + 0] = 255;
-				ptc[j * 512 * 4 + k * 4 + 1] = 0;
-				ptc[j * 512 * 4 + k * 4 + 2] = 0;
-			}*/
-		}
-	}
+            if (tmpR > 255)
+                tmpR = 255;
+            if (tmpG > 255)
+                tmpG = 255;
+            if (tmpB > 255)
+                tmpB = 255;
+            Frame[j * 512  +k].r= (unsigned char)tmpR;
+            Frame[j * 512 + k].g = (unsigned char)tmpG;
+            Frame[j * 512 + k].b = (unsigned char)tmpB;
+        /*    if (false)if (offset[j * 512 + k] < 0){
+                ptc[j * 512 * 4 + k * 4 + 0] = 255;
+                ptc[j * 512 * 4 + k * 4 + 1] = 0;
+                ptc[j * 512 * 4 + k * 4 + 2] = 0;
+            }*/
+        }
+    }
 
-	pd3dImmediateContext->Unmap(resTexBackCopy, 0);
-	D3DX11SaveTextureToFile(pd3dImmediateContext, tmp, D3DX11_IFF_BMP, L"save.bmp");
-	if (offset) free(offset);
-	if (tableOffset) free(tableOffset);
-	if (flag) free(flag);
-//	if (direction) free(direction);
-//	if (radiance) free(radiance);
-	if (photonrad) free(photonrad);
-	if (seephotonrad) free(seephotonrad);
+    pd3dImmediateContext->Unmap(resTexBackCopy, 0);
+    D3DX11SaveTextureToFile(pd3dImmediateContext, tmp, D3DX11_IFF_BMP, L"save.bmp");
+    if (offset) free(offset);
+    if (tableOffset) free(tableOffset);
+    if (flag) free(flag);
+//    if (direction) free(direction);
+//    if (radiance) free(radiance);
+    if (photonrad) free(photonrad);
+    if (seephotonrad) free(seephotonrad);
 
 
-	// If the settings dialog is being shown, then render it instead of rendering the app's scene
-	if (g_D3DSettingsDlg.IsActive())
-	{
-		g_D3DSettingsDlg.OnRender(fElapsedTime);
-		return;
-	}
+    // If the settings dialog is being shown, then render it instead of rendering the app's scene
+    if (g_D3DSettingsDlg.IsActive())
+    {
+        g_D3DSettingsDlg.OnRender(fElapsedTime);
+        return;
+    }
 
-	// Clear the render target and depth stencil
-	float ClearColor[4] = { 0.0f, 1.0f, 0.25f, 0.55f };
+    // Clear the render target and depth stencil
+    float ClearColor[4] = { 0.0f, 1.0f, 0.25f, 0.55f };
 
-	ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
-	pd3dImmediateContext->ClearRenderTargetView(pRTV, ClearColor);
-	ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
+    ID3D11RenderTargetView* pRTV = DXUTGetD3D11RenderTargetView();
+    pd3dImmediateContext->ClearRenderTargetView(pRTV, ClearColor);
+    ID3D11DepthStencilView* pDSV = DXUTGetD3D11DepthStencilView();
 
-	pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 127);
-	//	outputstencil(pDSV, pd3dDevice, pd3dImmediateContext);
+    pd3dImmediateContext->ClearDepthStencilView(pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 127);
+    //    outputstencil(pDSV, pd3dDevice, pd3dImmediateContext);
 
-	D3DXMATRIX mWorldViewProjection;
-	D3DXVECTOR3 vLightDir;
-	// Get the light direction
-	vLightDir = g_LightControl.GetLightDirection();
+    D3DXMATRIX mWorldViewProjection;
+    D3DXVECTOR3 vLightDir;
+    // Get the light direction
+    vLightDir = g_LightControl.GetLightDirection();
 
-	// Per frame cb update
-	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	V(pd3dImmediateContext->Map(g_pcbPSPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
-	CB_PS_PER_FRAME* pPerFrame = (CB_PS_PER_FRAME*)MappedResource.pData;
-	float fAmbient = 0.1f;
-	pPerFrame->m_vLightDirAmbient = D3DXVECTOR4( vLightDir.x, vLightDir.y, vLightDir.z, fAmbient );
-	pd3dImmediateContext->Unmap(g_pcbPSPerFrame, 0);
-	pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerFrameBind, 1, &g_pcbPSPerFrame);
+    // Per frame cb update
+    D3D11_MAPPED_SUBRESOURCE MappedResource;
+    V(pd3dImmediateContext->Map(g_pcbPSPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+    CB_PS_PER_FRAME* pPerFrame = (CB_PS_PER_FRAME*)MappedResource.pData;
+    float fAmbient = 0.1f;
+    pPerFrame->m_vLightDirAmbient = D3DXVECTOR4( vLightDir.x, vLightDir.y, vLightDir.z, fAmbient );
+    pd3dImmediateContext->Unmap(g_pcbPSPerFrame, 0);
+    pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerFrameBind, 1, &g_pcbPSPerFrame);
 
-	//Get the mesh
-	//IA setup
-	pd3dImmediateContext->IASetInputLayout(g_pVertexLayout11);
-	UINT Strides[1];
-	UINT Offsets[1];
+    //Get the mesh
+    //IA setup
+    pd3dImmediateContext->IASetInputLayout(g_pVertexLayout11);
+    UINT Strides[1];
+    UINT Offsets[1];
 
-	UINT stride = sizeof(SimpleVertex);
-	UINT offset_ = 0;
+    UINT stride = sizeof(SimpleVertex);
+    UINT offset_ = 0;
 
-	//====== ======
-	pd3dImmediateContext->IASetVertexBuffers(0, 1, &imgVertexBuf, &stride, &offset_);
-	pd3dImmediateContext->IASetIndexBuffer(imgIndexBuf, DXGI_FORMAT_R32_UINT, 0);
+    //====== ======
+    pd3dImmediateContext->IASetVertexBuffers(0, 1, &imgVertexBuf, &stride, &offset_);
+    pd3dImmediateContext->IASetIndexBuffer(imgIndexBuf, DXGI_FORMAT_R32_UINT, 0);
 
-	// Set the shaders
-	pd3dImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
-	pd3dImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
+    // Set the shaders
+    pd3dImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
+    pd3dImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
 
-	D3DXMATRIX m_orthoMatrix;				//正交投影矩阵  
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
+    D3DXMATRIX m_orthoMatrix;                //正交投影矩阵  
+    D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
 
-	vecEyeImg.x = 0.0f;
-	vecEyeImg.y = 600.0f;
-	vecEyeImg.z = 0.0f;
+    vecEyeImg.x = 0.0f;
+    vecEyeImg.y = 600.0f;
+    vecEyeImg.z = 0.0f;
 
-	D3DXMATRIX dView;
-	D3DXVECTOR3 dEye(vecEyeImg.x, vecEyeImg.y, vecEyeImg.z);
-	D3DXVECTOR3 dAt(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 dUp(0.0f, 0.0f, 1.0f);
-	D3DXMatrixLookAtLH(&dView, &dEye, &dAt, &dUp);
-	D3DXMATRIX dWorld;
-	D3DXMatrixIdentity(&dWorld);
-	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
-	mWorldViewProjection = dWorld * dView * m_orthoMatrix;
+    D3DXMATRIX dView;
+    D3DXVECTOR3 dEye(vecEyeImg.x, vecEyeImg.y, vecEyeImg.z);
+    D3DXVECTOR3 dAt(0.0f, 0.0f, 0.0f);
+    D3DXVECTOR3 dUp(0.0f, 0.0f, 1.0f);
+    D3DXMatrixLookAtLH(&dView, &dEye, &dAt, &dUp);
+    D3DXMATRIX dWorld;
+    D3DXMatrixIdentity(&dWorld);
+    D3DXMatrixOrthoLH(&m_orthoMatrix, (float)windowWidth, (float)windowHeight, /*50.0f*/nearPlane, farPlane/*4000.0f*/);
+    mWorldViewProjection = dWorld * dView * m_orthoMatrix;
 
-	// VS Per object
-	V(pd3dImmediateContext->Map(g_pcbVSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
-	CB_VS_PER_OBJECT* pVSPerObject = (CB_VS_PER_OBJECT*)MappedResource.pData;
-	D3DXMatrixTranspose(&pVSPerObject->m_WorldViewProj, &mWorldViewProjection);
-	D3DXMatrixTranspose(&pVSPerObject->m_World, &dWorld);
-	pd3dImmediateContext->Unmap(g_pcbVSPerObject, 0);
-	pd3dImmediateContext->VSSetConstantBuffers(g_iCBVSPerObjectBind, 1, &g_pcbVSPerObject);
+    // VS Per object
+    V(pd3dImmediateContext->Map(g_pcbVSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+    CB_VS_PER_OBJECT* pVSPerObject = (CB_VS_PER_OBJECT*)MappedResource.pData;
+    D3DXMatrixTranspose(&pVSPerObject->m_WorldViewProj, &mWorldViewProjection);
+    D3DXMatrixTranspose(&pVSPerObject->m_World, &dWorld);
+    pd3dImmediateContext->Unmap(g_pcbVSPerObject, 0);
+    pd3dImmediateContext->VSSetConstantBuffers(g_iCBVSPerObjectBind, 1, &g_pcbVSPerObject);
 
-	// PS Per object
-	V(pd3dImmediateContext->Map(g_pcbPSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
-	CB_PS_PER_OBJECT* pPSPerObject = (CB_PS_PER_OBJECT*)MappedResource.pData;
-	pPSPerObject->m_vObjectColor = D3DXVECTOR4(1, 1, 1, 1);
-	pd3dImmediateContext->Unmap(g_pcbPSPerObject, 0);
-	pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerObjectBind, 1, &g_pcbPSPerObject);
+    // PS Per object
+    V(pd3dImmediateContext->Map(g_pcbPSPerObject, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource));
+    CB_PS_PER_OBJECT* pPSPerObject = (CB_PS_PER_OBJECT*)MappedResource.pData;
+    pPSPerObject->m_vObjectColor = D3DXVECTOR4(1, 1, 1, 1);
+    pd3dImmediateContext->Unmap(g_pcbPSPerObject, 0);
+    pd3dImmediateContext->PSSetConstantBuffers(g_iCBPSPerObjectBind, 1, &g_pcbPSPerObject);
 
-	//Render
-	SDKMESH_SUBSET* pSubset = NULL;
-	D3D11_PRIMITIVE_TOPOLOGY PrimType;
+    //Render
+    SDKMESH_SUBSET* pSubset = NULL;
+    D3D11_PRIMITIVE_TOPOLOGY PrimType;
 
-	renderToBackTexture(pd3dDevice, pd3dImmediateContext);
+    renderToBackTexture(pd3dDevice, pd3dImmediateContext);
 
-	ID3D11Texture2D *newImg;
-	D3D11_TEXTURE2D_DESC copyDesc;
-	resTexBack->GetDesc(&copyDesc);
-	//copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
-	//copyDesc.Usage = D3D11_USAGE_STAGING;
-	copyDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	copyDesc.MiscFlags = 0;
-	hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &newImg);
-	if (FAILED(hr))
-		return;
-	pd3dImmediateContext->CopyResource(newImg, tmp);
+    ID3D11Texture2D *newImg;
+    D3D11_TEXTURE2D_DESC copyDesc;
+    resTexBack->GetDesc(&copyDesc);
+    //copyDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+    //copyDesc.Usage = D3D11_USAGE_STAGING;
+    copyDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    copyDesc.MiscFlags = 0;
+    hr = pd3dDevice->CreateTexture2D(&copyDesc, NULL, &newImg);
+    if (FAILED(hr))
+        return;
+    pd3dImmediateContext->CopyResource(newImg, tmp);
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC backTexRVD;
-	ZeroMemory(&backTexRVD, sizeof(backTexRVD));
-	backTexRVD.Format = copyDesc.Format;
-	backTexRVD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	backTexRVD.Texture2D.MostDetailedMip = 0;
-	backTexRVD.Texture2D.MipLevels = copyDesc.MipLevels;
+    D3D11_SHADER_RESOURCE_VIEW_DESC backTexRVD;
+    ZeroMemory(&backTexRVD, sizeof(backTexRVD));
+    backTexRVD.Format = copyDesc.Format;
+    backTexRVD.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    backTexRVD.Texture2D.MostDetailedMip = 0;
+    backTexRVD.Texture2D.MipLevels = copyDesc.MipLevels;
 
-	hr = pd3dDevice->CreateShaderResourceView(newImg, &backTexRVD, &imgTextureRVBack);
-	if (FAILED(hr)){
-		return;
-	}
-	pd3dImmediateContext->PSSetSamplers(0, 1, &g_pSamLinear);
-	pd3dImmediateContext->PSSetShaderResources(0, 1, &g_pTextureRV);
-	pd3dImmediateContext->PSSetShaderResources(1, 1, &imgTextureRVBack);
+    hr = pd3dDevice->CreateShaderResourceView(newImg, &backTexRVD, &imgTextureRVBack);
+    if (FAILED(hr)){
+        return;
+    }
+    pd3dImmediateContext->PSSetSamplers(0, 1, &g_pSamLinear);
+    pd3dImmediateContext->PSSetShaderResources(0, 1, &g_pTextureRV);
+    pd3dImmediateContext->PSSetShaderResources(1, 1, &imgTextureRVBack);
 
-	PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
-	pd3dImmediateContext->DrawIndexed(6, 0, 0);
+    PrimType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
+    pd3dImmediateContext->DrawIndexed(6, 0, 0);
 
-	DXUT_BeginPerfEvent(DXUT_PERFEVENTCOLOR, L"HUD / Stats");
-	DXUT_EndPerfEvent();
+    DXUT_BeginPerfEvent(DXUT_PERFEVENTCOLOR, L"HUD / Stats");
+    DXUT_EndPerfEvent();
 
 }
 
@@ -2081,19 +2058,19 @@ void CALLBACK OnD3D11DestroyDevice( void* pUserContext )
     g_Mesh11.Destroy();
 
     SAFE_RELEASE( g_pVertexLayout11 );
-	SAFE_RELEASE(photonVertexLayout);
-	
+    SAFE_RELEASE(photonVertexLayout);
+    
     SAFE_RELEASE( g_pVertexBuffer );
     SAFE_RELEASE( g_pIndexBuffer );
     SAFE_RELEASE( g_pVertexShader );
     SAFE_RELEASE( g_pPixelShader );
-	SAFE_RELEASE(g_pPixelShader1);
+    SAFE_RELEASE(g_pPixelShader1);
     SAFE_RELEASE( g_pSamLinear );
-	SAFE_RELEASE(photonVertexShader);
-	SAFE_RELEASE(photonPixelShaderPos);
-	SAFE_RELEASE(photonPixelShaderDir);
+    SAFE_RELEASE(photonVertexShader);
+    SAFE_RELEASE(photonPixelShaderPos);
+    SAFE_RELEASE(photonPixelShaderDir);
     SAFE_RELEASE( g_pcbVSPerObject );
     SAFE_RELEASE( g_pcbPSPerObject );
     SAFE_RELEASE( g_pcbPSPerFrame );
-	g_pTextureRV->Release();
+    g_pTextureRV->Release();
 }

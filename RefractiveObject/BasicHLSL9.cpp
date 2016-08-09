@@ -85,9 +85,7 @@ bool CALLBACK IsD3D9DeviceAcceptable( D3DCAPS9* pCaps, D3DFORMAT AdapterFormat,
     if( FAILED( pD3D->CheckDeviceFormat( pCaps->AdapterOrdinal, pCaps->DeviceType,
                                          AdapterFormat, D3DUSAGE_QUERY_POSTPIXELSHADER_BLENDING,
                                          D3DRTYPE_TEXTURE, BackBufferFormat ) ) )
-        return false;
-
-    return true;
+    return false;
 }
 
 
@@ -133,11 +131,11 @@ HRESULT CALLBACK OnD3D9CreateDevice( IDirect3DDevice9* pd3dDevice, const D3DSURF
     WCHAR str[MAX_PATH];
     DWORD dwShaderFlags = D3DXFX_NOT_CLONEABLE | D3DXSHADER_NO_PRESHADER | D3DXFX_LARGEADDRESSAWARE;
 #ifdef DEBUG_VS
-        dwShaderFlags |= D3DXSHADER_FORCE_VS_SOFTWARE_NOOPT;
-    #endif
+    dwShaderFlags |= D3DXSHADER_FORCE_VS_SOFTWARE_NOOPT;
+#endif
 #ifdef DEBUG_PS
-        dwShaderFlags |= D3DXSHADER_FORCE_PS_SOFTWARE_NOOPT;
-    #endif
+    dwShaderFlags |= D3DXSHADER_FORCE_PS_SOFTWARE_NOOPT;
+#endif
     V_RETURN( DXUTFindDXSDKMediaFileCch( str, MAX_PATH, L"BasicHLSL.fx" ) );
     V_RETURN( D3DXCreateEffectFromFile( pd3dDevice, str, NULL, NULL, dwShaderFlags, NULL, &g_pEffect9, NULL ) );
 
@@ -176,8 +174,7 @@ HRESULT CALLBACK OnD3D9CreateDevice( IDirect3DDevice9* pd3dDevice, const D3DSURF
     D3DXVECTOR3 vecEye( 0.0f, 0.0f, -15.0f );
     D3DXVECTOR3 vecAt ( 0.0f, 0.0f, -0.0f );
     g_Camera.SetViewParams( &vecEye, &vecAt );
-    //g_Camera.SetRadius( fObjectRadius * 3.0f, fObjectRadius * 0.5f, fObjectRadius * 10.0f );
-
+  
     return S_OK;
 }
 
@@ -249,13 +246,11 @@ HRESULT CALLBACK OnD3D9ResetDevice( IDirect3DDevice9* pd3dDevice,
     V_RETURN( D3DXCreateSprite( pd3dDevice, &g_pSprite9 ) );
     g_pTxtHelper = new CDXUTTextHelper( g_pFont9, g_pSprite9, 15 );
 
-        g_LightControl.OnD3D9ResetDevice( pBackBufferSurfaceDesc );
+	g_LightControl.OnD3D9ResetDevice( pBackBufferSurfaceDesc );
 
     // Setup the camera's projection parameters
     float fAspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
     g_Camera.SetProjParams( D3DX_PI / 4, fAspectRatio, 2.0f, 4000.0f );
-    //g_Camera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
-    //g_Camera.SetButtonMasks( MOUSE_LEFT_BUTTON, MOUSE_WHEEL, MOUSE_MIDDLE_BUTTON );
 
     g_HUD.SetLocation( pBackBufferSurfaceDesc->Width - 170, 0 );
     g_HUD.SetSize( 170, 170 );
@@ -291,9 +286,7 @@ void CALLBACK OnD3D9FrameRender( IDirect3DDevice9* pd3dDevice, double fTime, flo
     V( pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR( 0.0f, 0.25f, 0.25f, 0.55f ), 1.0f,
                           0 ) );
     
-    //pd3dDevice->SetSamplerState(0, D3DSAMP_SRGBTEXTURE, TRUE);
-    //pd3dDevice->SetRenderState( D3DRS_SRGBWRITEENABLE, TRUE );
-        // Render the scene
+    // Render the scene
     if( SUCCEEDED( pd3dDevice->BeginScene() ) )
     {
         // Get the projection & view matrix from the camera class

@@ -181,37 +181,10 @@ __global__ void marchKernel(unsigned char* ocTree, float* nTree, float* radiance
 		printf("level %d\n", level);
 	float value = -1, tlength;
 	int tseq, l3 = l1*l1*l1;
-	/*for (int i = -1; i <= 1; i++)
-		for (int j = -1; j <= 1; j++)
-			for (int k = -1; k <= 1; k++)
-				if (!(i == 0 && j == 0 && k == 0))
-				{
-		tseq = seq + i*l2 + j*l1 + k;
-		if (tseq >= 0 && tseq < l3)
-		{
-			if (abs(n - nTree[tseq]) > value)
-			{
-				value = abs(n - nTree[tseq]);
-				tn.x = k;
-				tn.y = j;
-				tn.z = -i;
-			}
-		}
-				}*/
-	//tlength = sqrt(tn.x*tn.x + tn.y*tn.y + tn.z*tn.z)*scale;
-	//tn.x = tn.x*value / tlength;
-	//tn.y = tn.y*value / tlength;
-	//tn.z = tn.z*value / tlength;
+	
 	if (idx == testid)
 		printf("value %lf tlength %lf tn %lf %lf %lf\n", value, tlength, tn.x, tn.y, tn.z);
-	/*	if (idx==0)
-	printf("tn %lf %lf %lf\n", tn.x, tn.y, tn.z);*/
-	/*	tn.x = opos.x > 0 ? nTree[seq] - nTree[seq - 1] : nTree[seq+1] - nTree[seq];  //yao chu
-	tn.y = opos.y > 0 ? nTree[seq] - nTree[seq - l1] : nTree[seq + l1] - nTree[seq];
-	tn.z = opos.z > 0 ? nTree[seq] - nTree[seq - l2] : nTree[seq + l2] - nTree[seq];
-	tn.x = tn.x / scale;
-	tn.y = tn.y / scale;
-	tn.z = tn.z / scale;*/
+	
 	len = 1 << level;
 	max.x = dir.x > 0.0 ? (len*scale - (pos.x - (opos.x - opos.x%len)*scale)) : -(pos.x - (opos.x - opos.x%len)*scale);
 	max.y = dir.y > 0.0 ? (len*scale - (pos.y - (opos.y - opos.y%len)*scale)) : -(pos.y - (opos.y - opos.y%len)*scale);
@@ -335,9 +308,6 @@ __global__ void marchKernel(unsigned char* ocTree, float* nTree, float* radiance
 			ratio = (tableZ - (pos.z - half)) / dir.z;
 			pos.x = pos.x + dir.x*ratio;
 			pos.y = pos.y + dir.y*ratio;
-		//	p2[idx * 3] = pos.x-half;
-		//	p2[idx * 3 + 1] = pos.y - half;
-		//	p2[idx * 3 + 2] = pos.z + dir.y*ratio - half;
 			x = int((pos.x - half + halft) / tableScale);
 			y = int((pos.y - half + halft) / tableScale);
 			if (x >= 0 && x < tableSize&&y >= 0 && y <= tableSize)
